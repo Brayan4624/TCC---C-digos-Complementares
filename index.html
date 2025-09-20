@@ -1,1 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - NEXUS</title>
+    <!-- Fontes do Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Vinculando o arquivo CSS -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Vinculando o arquivo JavaScript (para funcionalidades futuras ) -->
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Formas geométricas decorativas de fundo -->
+        <div class="geometric-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+            <div class="shape shape-5"></div>
+        </div>
 
+        <div class="login-content">
+            <header class="login-header">
+                <h1 class="login-title">Bem-vindo à NEXUS</h1>
+                <p class="login-subtitle">Crie sua conta para começar</p>
+            </header>
+
+            <main class="login-card">
+                <div class="login-card-content">
+                    <!-- Abas de Seleção -->
+                    <div class="login-tabs">
+                        <div class="tabs-list">
+                            <button class="tab-trigger active" data-tab="company">
+                                Empresa
+                            </button>
+                            <button class="tab-trigger" data-tab="student">
+                                Estudante
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Formulário de Empresa -->
+                    <div id="company-form" class="tab-content active">
+                        <div class="form-header">
+                            <h2 class="card-title">Cadastro de Empresa</h2>
+                            <p class="card-description">Preencha para criar sua conta empresarial.</p>
+                        </div>
+                        <form class="login-form">
+                            <div class="form-group">
+                                <label for="company-name" class="form-label">Nome da Empresa</label>
+                                <input id="company-name" type="text" placeholder="Nome completo da empresa" class="form-input" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="company-email" class="form-label">Email Corporativo</label>
+                                <input id="company-email" type="email" placeholder="contato@empresa.com" class="form-input" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="company-password" class="form-label">Senha</label>
+                                <div class="password-input-container">
+                                    <input id="company-password" type="password" placeholder="Crie uma senha forte" class="form-input password-input" required />
+                                    <button type="button" class="password-toggle" data-target="company-password"></button>
+                                </div>
+                            </div>
+                            <button type="submit" class="login-button">Cadastrar como Empresa</button>
+                        </form>
+                    </div>
+
+                    <!-- Formulário de Estudante (inicialmente oculto) -->
+                    <div id="student-form" class="tab-content">
+                        <div class="form-header">
+                            <h2 class="card-title">Cadastro de Estudante</h2>
+                            <p class="card-description">Crie sua conta para encontrar oportunidades.</p>
+                        </div>
+                        <form class="login-form">
+                            <div class="form-group">
+                                <label for="student-name" class="form-label">Nome Completo</label>
+                                <input id="student-name" type="text" placeholder="Seu nome completo" class="form-input" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="student-email" class="form-label">Email Pessoal</label>
+                                <input id="student-email" type="email" placeholder="seu.email@provedor.com" class="form-input" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="student-password" class="form-label">Senha</label>
+                                <div class="password-input-container">
+                                    <input id="student-password" type="password" placeholder="Crie uma senha forte" class="form-input password-input" required />
+                                    <button type="button" class="password-toggle" data-target="student-password"></button>
+                                </div>
+                            </div>
+                            <button type="submit" class="login-button">Cadastrar como Estudante</button>
+                        </form>
+                    </div>
+                    
+                    <footer class="login-footer">
+                        <div class="signup-link">
+                            Já tem uma conta? <a href="login.html" class="signup-link-text">Fazer Login</a>
+                        </div>
+                    </footer>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
