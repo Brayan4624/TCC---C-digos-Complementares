@@ -69,7 +69,7 @@
       </div>
 
       <div id="create-student-account-page" class="card" style="display: none;">
-        <button class="back-button" id="back-to-create-account">
+        <button class="back-button" id="back-to-create-account-from-student">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
           Voltar
         </button>
@@ -103,6 +103,43 @@
           <button class="btn-primary">Criar Conta <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-in"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/></svg></button>
         </div>
         <p class="link-text">Já tem uma conta? <a href="#" id="login-link-from-student">Fazer login</a></p>
+      </div>
+
+      <div id="create-company-account-page" class="card" style="display: none;">
+        <button class="back-button" id="back-to-create-account-from-company">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+          Voltar
+        </button>
+        <h1 class="app-title">Criar Conta</h1>
+        <p class="app-subtitle">Junte-se ao NEXUS</p>
+
+        <h2>Criar conta Empresarial</h2>
+        <p>Preencha seus dados para começar</p>
+
+        <div class="form-create-account">
+          <div class="form-group">
+            <label for="company-name">Nome da Empresa</label>
+            <input type="text" id="company-name" placeholder="Tech Solutions" />
+          </div>
+          <div class="form-group">
+            <label for="company-email">Email</label>
+            <input type="email" id="company-email" placeholder="seu.email@exemplo.com" />
+          </div>
+          <div class="form-group">
+            <label for="company-phone">Telefone</label>
+            <input type="tel" id="company-phone" placeholder="(11) 98765-4321" />
+          </div>
+          <div class="form-group">
+            <label for="company-password">Senha</label>
+            <input type="password" id="company-password" placeholder="••••••••" />
+          </div>
+          <div class="form-group">
+            <label for="confirm-company-password">Confirmar Senha</label>
+            <input type="password" id="confirm-company-password" placeholder="••••••••" />
+          </div>
+          <button class="btn-primary">Criar Conta <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-in"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/></svg></button>
+        </div>
+        <p class="link-text">Já tem uma conta? <a href="#" id="login-link-from-company">Fazer login</a></p>
       </div>
     </div>
     <script src="script.js"></script>

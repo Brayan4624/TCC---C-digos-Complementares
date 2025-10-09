@@ -2,21 +2,26 @@ document.addEventListener("DOMContentLoaded", () => {
     const loginPage = document.getElementById("login-page");
     const createAccountPage = document.getElementById("create-account-page");
     const createStudentAccountPage = document.getElementById("create-student-account-page");
+    const createCompanyAccountPage = document.getElementById("create-company-account-page");
 
     const createAccountLink = document.getElementById("create-account-link");
     const loginLinkFromCreate = document.getElementById("login-link-from-create");
     const loginLinkFromStudent = document.getElementById("login-link-from-student");
+    const loginLinkFromCompany = document.getElementById("login-link-from-company");
+
     const studentAccountBtn = document.getElementById("student-account-btn");
     const companyAccountBtn = document.getElementById("company-account-btn");
-    const backToCreateAccountBtn = document.getElementById("back-to-create-account");
+    const backToCreateAccountFromStudentBtn = document.getElementById("back-to-create-account-from-student");
+    const backToCreateAccountFromCompanyBtn = document.getElementById("back-to-create-account-from-company");
 
-    // Navegar para a página de criação de conta
+    // Navegar para a página de criação de conta (seleção de tipo)
     if (createAccountLink) {
         createAccountLink.addEventListener("click", (e) => {
             e.preventDefault();
             loginPage.style.display = "none";
             createAccountPage.style.display = "block";
             createStudentAccountPage.style.display = "none";
+            createCompanyAccountPage.style.display = "none";
         });
     }
 
@@ -27,6 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
             loginPage.style.display = "block";
             createAccountPage.style.display = "none";
             createStudentAccountPage.style.display = "none";
+            createCompanyAccountPage.style.display = "none";
         });
     }
 
@@ -37,6 +43,18 @@ document.addEventListener("DOMContentLoaded", () => {
             loginPage.style.display = "block";
             createAccountPage.style.display = "none";
             createStudentAccountPage.style.display = "none";
+            createCompanyAccountPage.style.display = "none";
+        });
+    }
+
+    // Navegar de volta para a página de login (do formulário de empresa)
+    if (loginLinkFromCompany) {
+        loginLinkFromCompany.addEventListener("click", (e) => {
+            e.preventDefault();
+            loginPage.style.display = "block";
+            createAccountPage.style.display = "none";
+            createStudentAccountPage.style.display = "none";
+            createCompanyAccountPage.style.display = "none";
         });
     }
 
@@ -46,24 +64,37 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             createAccountPage.style.display = "none";
             createStudentAccountPage.style.display = "block";
+            createCompanyAccountPage.style.display = "none";
         });
     }
 
-    // Selecionar tipo de conta Empresa (ainda não implementado, mas para consistência)
+    // Selecionar tipo de conta Empresa
     if (companyAccountBtn) {
         companyAccountBtn.addEventListener("click", (e) => {
             e.preventDefault();
-            // Por enquanto, apenas exibe um alerta ou redireciona para a página de criação de conta de empresa se existir
-            alert("Funcionalidade de criação de conta para Empresa ainda não implementada.");
+            createAccountPage.style.display = "none";
+            createStudentAccountPage.style.display = "none";
+            createCompanyAccountPage.style.display = "block";
         });
     }
 
     // Voltar da página de criação de conta de estudante para a seleção de tipo de conta
-    if (backToCreateAccountBtn) {
-        backToCreateAccountBtn.addEventListener("click", (e) => {
+    if (backToCreateAccountFromStudentBtn) {
+        backToCreateAccountFromStudentBtn.addEventListener("click", (e) => {
             e.preventDefault();
             createAccountPage.style.display = "block";
             createStudentAccountPage.style.display = "none";
+            createCompanyAccountPage.style.display = "none";
+        });
+    }
+
+    // Voltar da página de criação de conta de empresa para a seleção de tipo de conta
+    if (backToCreateAccountFromCompanyBtn) {
+        backToCreateAccountFromCompanyBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            createAccountPage.style.display = "block";
+            createStudentAccountPage.style.display = "none";
+            createCompanyAccountPage.style.display = "none";
         });
     }
 });
