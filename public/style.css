@@ -1,0 +1,288 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a2e;
+    color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.container {
+    display: flex;
+    background-color: #16213e;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    max-width: 900px;
+    width: 90%;
+}
+
+.logo-section {
+    background-color: #0f3460;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 40%;
+}
+
+.logo {
+    width: 80px;
+    margin-bottom: 20px;
+}
+
+.logo-section h1 {
+    margin: 0;
+    font-size: 2em;
+}
+
+.logo-section p {
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+.login-section {
+    padding: 40px;
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-section h2 {
+    margin-top: 0;
+    font-size: 1.8em;
+    text-align: center;
+}
+
+.login-section > p {
+    text-align: center;
+    margin-bottom: 30px;
+    opacity: 0.8;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+}
+
+.input-group input[type="email"],
+.input-group input[type="password"],
+.input-group input[type="text"],
+.input-group input[type="tel"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border: 1px solid #3e206e;
+    border-radius: 5px;
+    background-color: #2c2c4a;
+    color: #e0e0e0;
+    font-size: 1em;
+}
+
+.input-group input::placeholder {
+    color: #a0a0a0;
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    text-decoration: none;
+    color: #e0e0e0;
+}
+
+.btn.primary {
+    background-color: #e94560;
+    margin-top: 20px;
+}
+
+.btn.primary:hover {
+    background-color: #d6304a;
+}
+
+.btn.secondary {
+    background-color: #533483;
+    margin-bottom: 10px;
+}
+
+.btn.secondary:hover {
+    background-color: #412a66;
+}
+
+.divider {
+    text-align: center;
+    margin: 20px 0;
+    position: relative;
+    color: #a0a0a0;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 1px;
+    background-color: #3e206e;
+}
+
+.divider::before {
+    left: 0;
+}
+
+.divider::after {
+    right: 0;
+}
+
+.create-account-text {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 0.9em;
+}
+
+.create-account-text a {
+    color: #e94560;
+    text-decoration: none;
+}
+
+.create-account-text a:hover {
+    text-decoration: underline;
+}
+
+/* Estilos para a página de criar conta */
+.account-type-selection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+    text-align: center;
+}
+
+.account-type-selection h2 {
+    margin-top: 0;
+    font-size: 1.8em;
+}
+
+.account-type-selection > p {
+    margin-bottom: 30px;
+    opacity: 0.8;
+}
+
+.account-type-buttons button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 250px;
+    height: 150px;
+    margin: 15px 0;
+    background-color: #533483;
+    border: none;
+    border-radius: 10px;
+    color: #e0e0e0;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.account-type-buttons button:hover {
+    background-color: #412a66;
+}
+
+.account-type-buttons button svg {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 10px;
+    fill: #e0e0e0;
+}
+
+.account-type-buttons button p {
+    font-size: 0.8em;
+    opacity: 0.8;
+}
+
+.back-to-login {
+    margin-top: 30px;
+}
+
+.back-to-login a {
+    color: #e94560;
+    text-decoration: none;
+}
+
+.back-to-login a:hover {
+    text-decoration: underline;
+}
+
+/* Formulários de registro */
+.register-section {
+    padding: 40px;
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.register-section h2 {
+    margin-top: 0;
+    font-size: 1.8em;
+    text-align: center;
+}
+
+.register-section > p {
+    text-align: center;
+    margin-bottom: 30px;
+    opacity: 0.8;
+}
+
+.register-section .btn.primary {
+    margin-top: 30px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0;
+    }
+
+    .logo-section,
+    .login-section,
+    .register-section {
+        width: 100%;
+        padding: 30px;
+    }
+
+    .logo-section {
+        padding-bottom: 0;
+    }
+
+    .login-section h2,
+    .login-section > p,
+    .register-section h2,
+    .register-section > p {
+        text-align: center;
+    }
+
+    .divider::before,
+    .divider::after {
+        width: 30%;
+    }
+}
+

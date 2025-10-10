@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS - Conectando talentos e oportunidades</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="logo-section">
+            <img src="https://nexusapp-4pg8sd.manus.space/assets/logo.svg" alt="NEXUS Logo" class="logo">
+            <h1>NEXUS</h1>
+            <p>Conectando talentos e oportunidades</p>
+        </div>
+        <div class="login-section">
+            <h2>Entrar na sua conta</h2>
+            <p>Entre para acessar suas oportunidades</p>
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="seu.email@exemplo.com" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn primary">Entrar</button>
+            </form>
+            <div class="divider">ou</div>
+            <div class="quick-access">
+                <button class="btn secondary" id="perfilEmpresaBtn">Perfil Empresa</button>
+                <button class="btn secondary" id="perfilEstudanteBtn">Perfil Estudante</button>
+            </div>
+            <p class="create-account-text">Ainda não tem uma conta? <a href="/criar-conta">Criar conta gratuita</a></p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+

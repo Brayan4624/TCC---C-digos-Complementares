@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS - Criar Conta Estudante</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="logo-section">
+            <img src="https://nexusapp-4pg8sd.manus.space/assets/logo.svg" alt="NEXUS Logo" class="logo">
+            <h1>NEXUS</h1>
+            <p>Conectando talentos e oportunidades</p>
+        </div>
+        <div class="login-section register-section">
+            <h2>Criar conta de Estudante</h2>
+            <p>Preencha seus dados para começar</p>
+            <form id="studentRegisterForm">
+                <div class="input-group">
+                    <label for="studentName">Nome Completo</label>
+                    <input type="text" id="studentName" placeholder="João Silva" required>
+                </div>
+                <div class="input-group">
+                    <label for="studentEmail">Email</label>
+                    <input type="email" id="studentEmail" placeholder="seu.email@exemplo.com" required>
+                </div>
+                <div class="input-group">
+                    <label for="studentPhone">Telefone</label>
+                    <input type="tel" id="studentPhone" placeholder="(11) 98765-4321" required>
+                </div>
+                <div class="input-group">
+                    <label for="studentPassword">Senha</label>
+                    <input type="password" id="studentPassword" placeholder="••••••••" required>
+                </div>
+                <div class="input-group">
+                    <label for="studentConfirmPassword">Confirmar Senha</label>
+                    <input type="password" id="studentConfirmPassword" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn primary">Criar Conta</button>
+            </form>
+            <div class="back-to-login">
+                <a href="/criar-conta">Voltar</a>
+            </div>
+        </div>
+    </div>
+    <script src="../script.js"></script>
+</body>
+</html>
+
