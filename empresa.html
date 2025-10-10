@@ -1,66 +1,17 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>NEXUS — Perfil Empresa</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+  <title>Perfil Empresarial - NEXUS</title>
 </head>
-<body data-page="company">
-  <header class="topbar">
-    <div class="brand">
-      <div class="logo">NEXUS</div>
-      <div class="brand-text">
-        <h1>Perfil Empresa</h1>
-        <p class="subtitle">Visualize a empresa e publique vagas (demo)</p>
-      </div>
-    </div>
-    <nav class="nav">
-      <a href="index.html" class="btn ghost">Home</a>
-      <a href="login.html" class="btn">Logout</a>
-    </nav>
-  </header>
-
-  <main class="container">
-    <section class="profile-layout">
-      <aside class="card profile-card">
-        <div class="avatar big" id="company-avatar">T</div>
-        <h2 id="company-name">Tech Solutions</h2>
-        <p id="company-loc" class="muted">São Paulo, SP</p>
-
-        <div class="metrics">
-          <div><strong id="company-openings">8</strong><span> Vagas</span></div>
-          <div><strong id="company-employees">120</strong><span> Funcionários</span></div>
-          <div><strong id="company-rating">4.5</strong><span> Avaliação</span></div>
-        </div>
-      </aside>
-
-      <section class="card main-card">
-        <h3>Sobre</h3>
-        <p id="company-bio">Empresa focada em soluções web e mobile.</p>
-
-        <h3 style="margin-top:14px">Vagas</h3>
-        <div id="company-jobs" class="list-compact"></div>
-
-        <div style="margin-top:12px" class="card small">
-          <h4>Publicar Vaga (demo)</h4>
-          <form id="job-create" class="form">
-            <label>Título <input name="title" required /></label>
-            <label>Descrição <textarea name="description" rows="3"></textarea></label>
-            <label>Tags <input name="tags" /></label>
-            <div class="row">
-              <button class="btn primary" type="submit">Publicar Vaga</button>
-            </div>
-          </form>
-        </div>
-      </section>
-    </section>
+<body>
+  <header><h1 class="logo">NEXUS Empresas</h1></header>
+  <main class="login-container">
+    <h2>Bem-vindo, Empresa!</h2>
+    <button class="btn empresa" onclick="navigate('feed.html')">Ir para o Dashboard</button>
+    <button class="btn estudante" onclick="navigate('index.html')">Sair</button>
   </main>
-
-  <footer class="footer">
-    <small>© 2025 NEXUS — Demo</small>
-  </footer>
-
   <script src="script.js"></script>
 </body>
 </html>
