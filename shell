@@ -1,3 +1,0 @@
-javac AppServer.java
-java AppServer
-# Abra http://localhost:8000/index.html  (ou /login.html, /estudante.html, /empresa.html)
