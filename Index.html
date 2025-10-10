@@ -3,22 +3,27 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ConectaDev - App de Conexão e Desenvolvimento</title>
+  <title>ConectaDev - Plataforma Estudantil</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- ======== TOPO ======== -->
   <header class="topbar">
     <div class="brand">
       <div class="logo">CD</div>
-      <h1>ConectaDev</h1>
-      <p class="subtitle">Plataforma para estudantes — crie, mostre e conecte</p>
+      <div>
+        <h1>ConectaDev</h1>
+        <p class="subtitle">Conecte-se, desenvolva e mostre seu talento</p>
+      </div>
     </div>
+
     <nav class="nav">
       <button id="btn-profile-form" class="btn">Criar Perfil</button>
       <button id="btn-project-form" class="btn ghost">Compartilhar Projeto</button>
     </nav>
   </header>
 
+  <!-- ======== CONTEÚDO ======== -->
   <main class="container">
     <section class="panel">
       <h2>Perfis de Estudantes</h2>
@@ -31,15 +36,16 @@
     </section>
   </main>
 
-  <!-- Forms em modal simples -->
+  <!-- ======== MODAIS ======== -->
   <div id="overlay" class="overlay hidden"></div>
 
+  <!-- Modal Perfil -->
   <div id="profile-modal" class="modal hidden">
     <form id="profile-form" class="form-card">
       <h3>Criar Perfil</h3>
       <label>Nome<input name="name" required /></label>
-      <label>Biografia <textarea name="bio" rows="3"></textarea></label>
-      <label>Habilidades (vírgula separa)<input name="skills" /></label>
+      <label>Biografia<textarea name="bio" rows="3"></textarea></label>
+      <label>Habilidades (separadas por vírgula)<input name="skills" /></label>
       <label>Interesses (matérias, cursos)<input name="interests" /></label>
       <div class="form-actions">
         <button type="submit" class="btn primary">Salvar</button>
@@ -47,176 +53,3 @@
       </div>
     </form>
   </div>
-
-  <div id="project-modal" class="modal hidden">
-    <form id="project-form" class="form-card">
-      <h3>Compartilhar Projeto</h3>
-      <label>Título<input name="title" required /></label>
-      <label>Autor (ID do estudante)<input name="authorId" required /></label>
-      <label>Descrição <textarea name="description" rows="4"></textarea></label>
-      <label>Tags (vírgula separa)<input name="tags" /></label>
-      <div class="form-actions">
-        <button type="submit" class="btn primary">Compartilhar</button>
-        <button type="button" id="close-project" class="btn ghost">Cancelar</button>
-      </div>
-    </form>
-  </div>
-
-  <footer class="footer">
-    <small>Feito para estudantes — Estimule aprendizado prático, crie portfólios e faça networking.</small>
-  </footer>
-
-<script>
-const API = '';
-
-/* UI helpers */
-const $ = (sel) => document.querySelector(sel);
-const $$ = (sel) => Array.from(document.querySelectorAll(sel));
-
-function showModal(id) {
-  $('#overlay').classList.remove('hidden');
-  $(id).classList.remove('hidden');
-}
-function closeAll() {
-  $('#overlay').classList.add('hidden');
-  $$('.modal').forEach(m=>m.classList.add('hidden'));
-}
-
-/* Forms toggles */
-$('#btn-profile-form').addEventListener('click', ()=>showModal('#profile-modal'));
-$('#btn-project-form').addEventListener('click', ()=>showModal('#project-modal'));
-$('#close-profile').addEventListener('click', closeAll);
-$('#close-project').addEventListener('click', closeAll);
-$('#overlay').addEventListener('click', closeAll);
-
-/* Fetch data and render */
-async function fetchStudents() {
-  const res = await fetch('/api/students');
-  const data = await res.json();
-  return data;
-}
-async function fetchProjects() {
-  const res = await fetch('/api/projects');
-  const data = await res.json();
-  return data;
-}
-
-function renderStudents(list) {
-  const container = $('#students-list');
-  container.innerHTML = '';
-  if (!list.length) {
-    container.innerHTML = '<div class="empty">Nenhum perfil ainda. Seja o primeiro!</div>';
-    return;
-  }
-  list.forEach(s => {
-    const card = document.createElement('article');
-    card.className = 'card';
-    card.innerHTML = `
-      <div class="card-head">
-        <div class="avatar">${(s.name||'')[0]||'?'}</div>
-        <div>
-          <h3>${escapeHtml(s.name)}</h3>
-          <div class="meta">ID: <strong>${s.id}</strong></div>
-        </div>
-      </div>
-      <p class="bio">${escapeHtml(s.bio||'')}</p>
-      <div class="chips">${(s.skills||'').split(',').filter(Boolean).map(t=>`<span class="chip">${escapeHtml(t.trim())}</span>`).join('')}</div>
-    `;
-    container.appendChild(card);
-  });
-}
-
-function renderProjects(list) {
-  const container = $('#projects-list');
-  container.innerHTML = '';
-  if (!list.length) {
-    container.innerHTML = '<div class="empty">Nenhum projeto compartilhado.</div>';
-    return;
-  }
-  list.forEach(p => {
-    const card = document.createElement('article');
-    card.className = 'card project';
-    card.innerHTML = `
-      <div class="card-head">
-        <div class="avatar small">P</div>
-        <div>
-          <h3>${escapeHtml(p.title)}</h3>
-          <div class="meta">Autor ID: <strong>${p.authorId}</strong> • Projeto #${p.id}</div>
-        </div>
-      </div>
-      <p class="bio">${escapeHtml(p.description||'')}</p>
-      <div class="chips">${(p.tags||'').split(',').filter(Boolean).map(t=>`<span class="chip">${escapeHtml(t.trim())}</span>`).join('')}</div>
-    `;
-    container.appendChild(card);
-  });
-}
-
-function escapeHtml(s) {
-  if (!s) return '';
-  return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
-}
-
-async function reloadAll() {
-  const [students, projects] = await Promise.all([fetchStudents(), fetchProjects()]);
-  renderStudents(students);
-  renderProjects(projects);
-}
-
-/* Submit handlers */
-$('#profile-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const fd = new FormData(e.target);
-  const body = new URLSearchParams();
-  for (const [k,v] of fd.entries()) body.append(k,v);
-  const res = await fetch('/api/students',{
-    method:'POST',
-    headers:{'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},
-    body: body.toString()
-  });
-  if (res.ok) {
-    e.target.reset();
-    closeAll();
-    reloadAll();
-    toast('Perfil salvo');
-  } else {
-    toast('Erro ao salvar perfil');
-  }
-});
-
-$('#project-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const fd = new FormData(e.target);
-  const body = new URLSearchParams();
-  for (const [k,v] of fd.entries()) body.append(k,v);
-  const res = await fetch('/api/projects',{
-    method:'POST',
-    headers:{'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},
-    body: body.toString()
-  });
-  if (res.ok) {
-    e.target.reset();
-    closeAll();
-    reloadAll();
-    toast('Projeto compartilhado');
-  } else {
-    toast('Erro ao compartilhar projeto');
-  }
-});
-
-/* small toast */
-function toast(msg) {
-  const t = document.createElement('div');
-  t.className = 'toast';
-  t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(()=>t.classList.add('visible'),20);
-  setTimeout(()=>t.classList.remove('visible'),2200);
-  setTimeout(()=>t.remove(),2600);
-}
-
-/* init */
-reloadAll();
-</script>
-</body>
-</html>
-
