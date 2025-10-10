@@ -3,53 +3,32 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ConectaDev - Plataforma Estudantil</title>
+  <title>NEXUS - Demo Empresas & Estudantes</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- ======== TOPO ======== -->
   <header class="topbar">
     <div class="brand">
-      <div class="logo">CD</div>
+      <div class="logo">NEXUS</div>
       <div>
-        <h1>ConectaDev</h1>
-        <p class="subtitle">Conecte-se, desenvolva e mostre seu talento</p>
+        <h1>NEXUS</h1>
+        <p class="subtitle">Conecte talentos e oportunidades</p>
       </div>
     </div>
-
     <nav class="nav">
-      <button id="btn-profile-form" class="btn">Criar Perfil</button>
-      <button id="btn-project-form" class="btn ghost">Compartilhar Projeto</button>
+      <button class="btn" data-link="#/demo">Demo Empresas</button>
+      <button class="btn" data-link="#/">Login</button>
     </nav>
   </header>
 
-  <!-- ======== CONTEÚDO ======== -->
-  <main class="container">
-    <section class="panel">
-      <h2>Perfis de Estudantes</h2>
-      <div id="students-list" class="grid"></div>
-    </section>
-
-    <section class="panel">
-      <h2>Projetos Compartilhados</h2>
-      <div id="projects-list" class="grid"></div>
-    </section>
+  <main id="app" class="container">
+    <!-- content rendered by script.js (SPA hash routing) -->
   </main>
 
-  <!-- ======== MODAIS ======== -->
-  <div id="overlay" class="overlay hidden"></div>
+  <footer class="footer">
+    <small>© 2025 NEXUS — Plataforma de conexão para estudantes e empresas.</small>
+  </footer>
 
-  <!-- Modal Perfil -->
-  <div id="profile-modal" class="modal hidden">
-    <form id="profile-form" class="form-card">
-      <h3>Criar Perfil</h3>
-      <label>Nome<input name="name" required /></label>
-      <label>Biografia<textarea name="bio" rows="3"></textarea></label>
-      <label>Habilidades (separadas por vírgula)<input name="skills" /></label>
-      <label>Interesses (matérias, cursos)<input name="interests" /></label>
-      <div class="form-actions">
-        <button type="submit" class="btn primary">Salvar</button>
-        <button type="button" id="close-profile" class="btn ghost">Cancelar</button>
-      </div>
-    </form>
-  </div>
+  <script src="script.js"></script>
+</body>
+</html>
