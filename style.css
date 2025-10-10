@@ -1,4 +1,9 @@
-/* ======= RESET ======= */
+/* ================================
+   NEXUS EMPRESAS - STYLE SHEET
+   Design escuro, limpo e moderno
+================================= */
+
+/* ===== RESET ===== */
 * {
   margin: 0;
   padding: 0;
@@ -6,33 +11,34 @@
   font-family: 'Poppins', sans-serif;
 }
 
-/* ======= CORES ======= */
 :root {
-  --fundo: #121212;
-  --texto: #f1f1f1;
-  --cinza: #b3b3b3;
+  --fundo: #0f0f10;
+  --fundo-card: #1a1a1d;
+  --texto: #f2f2f2;
+  --cinza: #b5b5b5;
   --destaque: #ff4081;
-  --botao-secundario: #1e1e1e;
+  --destaque-hover: #ff6399;
+  --transparente: rgba(255, 255, 255, 0.05);
 }
 
-/* ======= GERAL ======= */
+/* ===== BODY ===== */
 body {
-  background-color: var(--fundo);
+  background: var(--fundo);
   color: var(--texto);
-  line-height: 1.6;
   overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
-/* ======= CABEÇALHO ======= */
+/* ===== HEADER ===== */
 .header {
+  background: radial-gradient(circle at center, rgba(255, 64, 129, 0.1), transparent 80%);
   text-align: center;
-  padding: 60px 20px;
-  background: linear-gradient(180deg, rgba(255,64,129,0.1), transparent);
+  padding: 80px 20px;
 }
 
 .header h1 {
-  font-size: 2.5rem;
-  font-weight: 600;
+  font-size: 2.8rem;
+  color: #fff;
 }
 
 .header span {
@@ -40,127 +46,157 @@ body {
 }
 
 .header p {
+  margin-top: 15px;
   color: var(--cinza);
-  margin-top: 10px;
   font-size: 1.1rem;
 }
 
-/* ======= SEÇÕES ======= */
+/* ===== SEÇÕES ===== */
 section {
-  padding: 50px 20px;
-  max-width: 1000px;
-  margin: 0 auto;
+  padding: 60px 10%;
+  text-align: center;
 }
 
-/* ======= CARDS ======= */
+section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+  color: var(--destaque);
+}
+
+/* ===== CARDS ===== */
 .cards {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 25px;
-  margin-top: 30px;
+  gap: 30px;
 }
 
 .card {
-  background-color: #1e1e1e;
-  padding: 25px;
-  border-radius: 15px;
+  background: var(--fundo-card);
+  padding: 30px;
+  border-radius: 16px;
   width: 280px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: left;
+  transition: 0.3s;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
 }
 
 .card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 0 15px rgba(255,64,129,0.4);
+  box-shadow: 0 0 15px rgba(255, 64, 129, 0.4);
+}
+
+.card img {
+  width: 45px;
+  margin-bottom: 15px;
+  filter: invert(78%) sepia(60%) saturate(500%) hue-rotate(310deg);
 }
 
 .card h3 {
   color: var(--destaque);
+  font-size: 1.3rem;
   margin-bottom: 10px;
 }
 
-/* ======= BENEFÍCIOS ======= */
+.card p {
+  color: var(--cinza);
+  font-size: 0.95rem;
+}
+
+/* ===== BENEFÍCIOS ===== */
 .benefits ul {
   list-style: none;
-  margin-top: 20px;
+  text-align: left;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .benefits li {
-  background-color: #1e1e1e;
+  background: var(--fundo-card);
+  margin: 10px 0;
   padding: 12px 16px;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  transition: background 0.3s;
+  border-radius: 12px;
+  color: var(--texto);
+  font-size: 0.95rem;
+  transition: background 0.3s ease;
 }
 
 .benefits li:hover {
-  background-color: rgba(255,64,129,0.15);
+  background: rgba(255, 64, 129, 0.15);
 }
 
-/* ======= DEMO MODE ======= */
-.demo-mode h2 {
-  text-align: center;
-}
-
+/* ===== DEMO BUTTONS ===== */
 .demo-buttons {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 15px;
-  margin-top: 25px;
 }
 
 .demo-buttons button {
-  background-color: transparent;
+  background: transparent;
   border: 2px solid var(--destaque);
   color: var(--destaque);
-  padding: 12px 20px;
-  border-radius: 30px;
+  padding: 12px 25px;
+  border-radius: 50px;
   cursor: pointer;
   font-weight: 500;
-  transition: all 0.3s ease;
+  transition: 0.3s ease;
 }
 
 .demo-buttons button:hover {
-  background-color: var(--destaque);
+  background: var(--destaque);
   color: #fff;
 }
 
-/* ======= RODAPÉ ======= */
+/* ===== FOOTER ===== */
 .footer {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
+  background: #111;
+  text-align: center;
   padding: 40px 20px;
-  background-color: #1a1a1a;
+  border-top: 1px solid rgba(255, 64, 129, 0.2);
 }
 
 .btn-primary,
 .btn-secondary {
-  padding: 14px 28px;
-  border: none;
+  margin: 10px;
+  padding: 14px 30px;
   border-radius: 30px;
-  cursor: pointer;
   font-weight: 600;
-  font-size: 1rem;
-  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+  transition: 0.3s ease;
 }
 
 .btn-primary {
-  background-color: var(--destaque);
-  color: white;
+  background: var(--destaque);
+  color: #fff;
 }
 
 .btn-primary:hover {
-  background-color: #ff6399;
+  background: var(--destaque-hover);
 }
 
 .btn-secondary {
-  background-color: var(--botao-secundario);
+  background: transparent;
   color: var(--texto);
   border: 1px solid var(--destaque);
 }
 
 .btn-secondary:hover {
-  background-color: rgba(255,64,129,0.1);
+  background: rgba(255, 64, 129, 0.1);
+}
+
+.footer-text {
+  color: var(--cinza);
+  margin-top: 20px;
+  font-size: 0.9rem;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+  .cards {
+    flex-direction: column;
+    align-items: center;
+  }
 }

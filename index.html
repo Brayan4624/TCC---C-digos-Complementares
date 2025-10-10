@@ -1,32 +1,72 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>NEXUS - Demo Empresas & Estudantes</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEXUS Empresas</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="shortcut icon" href="logo.png" type="image/png">
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <div class="logo">NEXUS</div>
-      <div>
-        <h1>NEXUS</h1>
-        <p class="subtitle">Conecte talentos e oportunidades</p>
-      </div>
+  <!-- ======= HEADER ======= -->
+  <header class="header">
+    <div class="header-content">
+      <h1>Bem-vindo ao <span>NEXUS Empresas</span></h1>
+      <p>Conecte-se com os melhores talentos do mercado.</p>
     </div>
-    <nav class="nav">
-      <button class="btn" data-link="#/demo">Demo Empresas</button>
-      <button class="btn" data-link="#/">Login</button>
-    </nav>
   </header>
 
-  <main id="app" class="container">
-    <!-- content rendered by script.js (SPA hash routing) -->
-  </main>
+  <!-- ======= SEÇÃO O QUE VOCÊ PODE FAZER ======= -->
+  <section class="features">
+    <h2>O que você pode fazer</h2>
+    <div class="cards">
+      <div class="card">
+        <img src="icons/talents.svg" alt="Ícone de Talentos" />
+        <h3>Encontre Talentos</h3>
+        <p>Acesse uma base de estagiários qualificados e prontos para trabalhar.</p>
+      </div>
+      <div class="card">
+        <img src="icons/jobs.svg" alt="Ícone de Vagas" />
+        <h3>Publique Vagas</h3>
+        <p>Crie e gerencie vagas de forma simples e eficiente.</p>
+      </div>
+      <div class="card">
+        <img src="icons/analytics.svg" alt="Ícone de Analytics" />
+        <h3>Analytics</h3>
+        <p>Acompanhe métricas de visualizações e candidaturas em tempo real.</p>
+      </div>
+    </div>
+  </section>
 
+  <!-- ======= SEÇÃO BENEFÍCIOS ======= -->
+  <section class="benefits">
+    <h2>Benefícios da Plataforma</h2>
+    <ul>
+      <li>✔ Acesso a milhares de candidatos qualificados</li>
+      <li>✔ Publicação ilimitada de vagas</li>
+      <li>✔ Sistema de mensagens integrado</li>
+      <li>✔ Dashboard com estatísticas completas</li>
+      <li>✔ Gestão de candidaturas simplificada</li>
+      <li>✔ Perfil empresarial personalizado</li>
+    </ul>
+  </section>
+
+  <!-- ======= SEÇÃO MODO DEMONSTRAÇÃO ======= -->
+  <section class="demo-mode">
+    <h2>Explore o modo demonstração</h2>
+    <div class="demo-buttons">
+      <button onclick="abrirDemo('dashboard')">Dashboard Empresarial</button>
+      <button onclick="abrirDemo('busca')">Busca de Estagiários</button>
+      <button onclick="abrirDemo('vagas')">Publicação de Vagas</button>
+      <button onclick="abrirDemo('mensagens')">Sistema de Mensagens</button>
+    </div>
+  </section>
+
+  <!-- ======= RODAPÉ ======= -->
   <footer class="footer">
-    <small>© 2025 NEXUS — Plataforma de conexão para estudantes e empresas.</small>
+    <button class="btn-primary" onclick="continuar()">Continuar como Empresa</button>
+    <button class="btn-secondary" onclick="voltar()">Voltar ao Login</button>
+    <p class="footer-text">© 2025 NEXUS — Todos os direitos reservados.</p>
   </footer>
 
   <script src="script.js"></script>
