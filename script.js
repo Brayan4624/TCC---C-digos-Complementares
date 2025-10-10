@@ -1,101 +1,160 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const loginPage = document.getElementById("login-page");
-    const createAccountPage = document.getElementById("create-account-page");
-    const createStudentAccountPage = document.getElementById("create-student-account-page");
-    const createCompanyAccountPage = document.getElementById("create-company-account-page");
+const API = '';
 
-    const createAccountLink = document.getElementById("create-account-link");
-    const loginLinkFromCreate = document.getElementById("login-link-from-create");
-    const loginLinkFromStudent = document.getElementById("login-link-from-student");
-    const loginLinkFromCompany = document.getElementById("login-link-from-company");
+/* === UTILITÁRIOS === */
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
-    const studentAccountBtn = document.getElementById("student-account-btn");
-    const companyAccountBtn = document.getElementById("company-account-btn");
-    const backToCreateAccountFromStudentBtn = document.getElementById("back-to-create-account-from-student");
-    const backToCreateAccountFromCompanyBtn = document.getElementById("back-to-create-account-from-company");
+function showModal(id) {
+  $('#overlay').classList.remove('hidden');
+  $(id).classList.remove('hidden');
+}
+function closeAll() {
+  $('#overlay').classList.add('hidden');
+  $$('.modal').forEach(m => m.classList.add('hidden'));
+}
 
-    // Navegar para a página de criação de conta (seleção de tipo)
-    if (createAccountLink) {
-        createAccountLink.addEventListener("click", (e) => {
-            e.preventDefault();
-            loginPage.style.display = "none";
-            createAccountPage.style.display = "block";
-            createStudentAccountPage.style.display = "none";
-            createCompanyAccountPage.style.display = "none";
-        });
-    }
+/* === EVENTOS DE BOTÕES === */
+$('#btn-profile-form').addEventListener('click', () => showModal('#profile-modal'));
+$('#btn-project-form').addEventListener('click', () => showModal('#project-modal'));
+$('#close-profile').addEventListener('click', closeAll);
+$('#close-project').addEventListener('click', closeAll);
+$('#overlay').addEventListener('click', closeAll);
 
-    // Navegar de volta para a página de login (da seleção de tipo de conta)
-    if (loginLinkFromCreate) {
-        loginLinkFromCreate.addEventListener("click", (e) => {
-            e.preventDefault();
-            loginPage.style.display = "block";
-            createAccountPage.style.display = "none";
-            createStudentAccountPage.style.display = "none";
-            createCompanyAccountPage.style.display = "none";
-        });
-    }
+/* === FETCH & RENDER === */
+async function fetchStudents() {
+  const res = await fetch('/api/students');
+  return await res.json();
+}
 
-    // Navegar de volta para a página de login (do formulário de estudante)
-    if (loginLinkFromStudent) {
-        loginLinkFromStudent.addEventListener("click", (e) => {
-            e.preventDefault();
-            loginPage.style.display = "block";
-            createAccountPage.style.display = "none";
-            createStudentAccountPage.style.display = "none";
-            createCompanyAccountPage.style.display = "none";
-        });
-    }
+async function fetchProjects() {
+  const res = await fetch('/api/projects');
+  return await res.json();
+}
 
-    // Navegar de volta para a página de login (do formulário de empresa)
-    if (loginLinkFromCompany) {
-        loginLinkFromCompany.addEventListener("click", (e) => {
-            e.preventDefault();
-            loginPage.style.display = "block";
-            createAccountPage.style.display = "none";
-            createStudentAccountPage.style.display = "none";
-            createCompanyAccountPage.style.display = "none";
-        });
-    }
+function renderStudents(list) {
+  const container = $('#students-list');
+  container.innerHTML = '';
+  if (!list.length) {
+    container.innerHTML = '<div class="empty">Nenhum perfil ainda. Seja o primeiro!</div>';
+    return;
+  }
 
-    // Selecionar tipo de conta Estudante/Estagiário
-    if (studentAccountBtn) {
-        studentAccountBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            createAccountPage.style.display = "none";
-            createStudentAccountPage.style.display = "block";
-            createCompanyAccountPage.style.display = "none";
-        });
-    }
+  list.forEach(s => {
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-head">
+        <div class="avatar">${(s.name || '?')[0]}</div>
+        <div>
+          <h3>${escapeHtml(s.name)}</h3>
+          <div class="meta">ID: <strong>${s.id}</strong></div>
+        </div>
+      </div>
+      <p class="bio">${escapeHtml(s.bio || '')}</p>
+      <div class="chips">${(s.skills || '')
+        .split(',')
+        .filter(Boolean)
+        .map(t => `<span class="chip">${escapeHtml(t.trim())}</span>`)
+        .join('')}</div>
+    `;
+    container.appendChild(card);
+  });
+}
 
-    // Selecionar tipo de conta Empresa
-    if (companyAccountBtn) {
-        companyAccountBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            createAccountPage.style.display = "none";
-            createStudentAccountPage.style.display = "none";
-            createCompanyAccountPage.style.display = "block";
-        });
-    }
+function renderProjects(list) {
+  const container = $('#projects-list');
+  container.innerHTML = '';
+  if (!list.length) {
+    container.innerHTML = '<div class="empty">Nenhum projeto compartilhado.</div>';
+    return;
+  }
 
-    // Voltar da página de criação de conta de estudante para a seleção de tipo de conta
-    if (backToCreateAccountFromStudentBtn) {
-        backToCreateAccountFromStudentBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            createAccountPage.style.display = "block";
-            createStudentAccountPage.style.display = "none";
-            createCompanyAccountPage.style.display = "none";
-        });
-    }
+  list.forEach(p => {
+    const card = document.createElement('article');
+    card.className = 'card project';
+    card.innerHTML = `
+      <div class="card-head">
+        <div class="avatar small">P</div>
+        <div>
+          <h3>${escapeHtml(p.title)}</h3>
+          <div class="meta">Autor ID: <strong>${p.authorId}</strong> • Projeto #${p.id}</div>
+        </div>
+      </div>
+      <p class="bio">${escapeHtml(p.description || '')}</p>
+      <div class="chips">${(p.tags || '')
+        .split(',')
+        .filter(Boolean)
+        .map(t => `<span class="chip">${escapeHtml(t.trim())}</span>`)
+        .join('')}</div>
+    `;
+    container.appendChild(card);
+  });
+}
 
-    // Voltar da página de criação de conta de empresa para a seleção de tipo de conta
-    if (backToCreateAccountFromCompanyBtn) {
-        backToCreateAccountFromCompanyBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            createAccountPage.style.display = "block";
-            createStudentAccountPage.style.display = "none";
-            createCompanyAccountPage.style.display = "none";
-        });
-    }
+function escapeHtml(s) {
+  if (!s) return '';
+  return s
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');
+}
+
+async function reloadAll() {
+  const [students, projects] = await Promise.all([fetchStudents(), fetchProjects()]);
+  renderStudents(students);
+  renderProjects(projects);
+}
+
+/* === FORMULÁRIOS === */
+$('#profile-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const body = new URLSearchParams(fd);
+  const res = await fetch('/api/students', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+    body: body.toString(),
+  });
+  if (res.ok) {
+    e.target.reset();
+    closeAll();
+    reloadAll();
+    toast('Perfil salvo com sucesso!');
+  } else {
+    toast('Erro ao salvar perfil');
+  }
 });
 
+$('#project-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const body = new URLSearchParams(fd);
+  const res = await fetch('/api/projects', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+    body: body.toString(),
+  });
+  if (res.ok) {
+    e.target.reset();
+    closeAll();
+    reloadAll();
+    toast('Projeto compartilhado!');
+  } else {
+    toast('Erro ao compartilhar projeto');
+  }
+});
+
+/* === TOAST === */
+function toast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.classList.add('visible'), 20);
+  setTimeout(() => t.classList.remove('visible'), 2200);
+  setTimeout(() => t.remove(), 2600);
+}
+
+/* === INICIALIZAÇÃO === */
+reloadAll();
