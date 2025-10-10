@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NEXUS — Perfil Estudante</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="student">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">NEXUS</div>
+      <div class="brand-text">
+        <h1>Perfil Estudante</h1>
+        <p class="subtitle">Visualize e edite o perfil (demo)</p>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="index.html" class="btn ghost">Home</a>
+      <a href="login.html" class="btn">Logout</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="profile-layout">
+      <aside class="card profile-card">
+        <div class="avatar big" id="student-avatar">J</div>
+        <h2 id="student-name">João Paulo</h2>
+        <p id="student-role" class="muted">Desenvolvedor Full Stack</p>
+
+        <div class="metrics">
+          <div><strong id="metric-applied">3</strong><span> Aplicações</span></div>
+          <div><strong id="metric-favs">5</strong><span> Favoritos</span></div>
+          <div><strong id="metric-views">120</strong><span> Visualizações</span></div>
+        </div>
+
+        <div style="margin-top:12px">
+          <button id="edit-profile" class="btn">Editar perfil</button>
+        </div>
+      </aside>
+
+      <section class="card main-card">
+        <h3>Sobre</h3>
+        <p id="student-bio">Desenvolvedor Full Stack apaixonado por criar experiências digitais.</p>
+
+        <h3 style="margin-top:14px">Habilidades</h3>
+        <div id="student-skills" class="chips"></div>
+
+        <h3 style="margin-top:14px">Projetos</h3>
+        <div id="student-projects" class="list-compact"></div>
+
+        <div style="margin-top:12px" class="card small" id="project-form-area">
+          <h4>Adicionar Projeto (demo)</h4>
+          <form id="project-create" class="form">
+            <label>Título <input name="title" required /></label>
+            <label>Descrição <textarea name="description" rows="3"></textarea></label>
+            <div class="row">
+              <button class="btn primary" type="submit">Adicionar</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <small>© 2025 NEXUS — Demo</small>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
