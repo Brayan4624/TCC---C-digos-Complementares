@@ -9,46 +9,36 @@ public class AppServer {
         System.out.println("Servidor rodando em http://localhost:" + port);
 
         while (true) {
-            Socket socket = serverSocket.accept();
-            new Thread(() -> handleRequest(socket)).start();
-        }
-    }
+            try (Socket socket = serverSocket.accept()) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                OutputStream output = socket.getOutputStream();
 
-    private static void handleRequest(Socket socket) {
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-             OutputStream out = socket.getOutputStream()) {
+                String line = reader.readLine();
+                if (line == null) continue;
 
-            String line = in.readLine();
-            if (line == null) return;
+                String[] parts = line.split(" ");
+                if (parts.length < 2) continue;
+                String path = parts[1];
+                if (path.equals("/")) path = "/index.html";
 
-            String[] parts = line.split(" ");
-            String path = parts.length > 1 ? parts[1] : "/";
-            if (path.equals("/")) path = "/index.html";
-
-            File file = new File("." + path);
-            if (!file.exists()) {
-                sendResponse(out, "404 Not Found", "text/html", "<h1>404 - Página não encontrada</h1>");
-                return;
+                File file = new File("." + path);
+                if (file.exists() && !file.isDirectory()) {
+                    byte[] content = Files.readAllBytes(file.toPath());
+                    String mime = getMimeType(path);
+                    output.write(("HTTP/1.1 200 OK\r\nContent-Type: " + mime + "\r\n\r\n").getBytes());
+                    output.write(content);
+                } else {
+                    String notFound = "<h1 style='color:red;'>404 - Página não encontrada</h1>";
+                    output.write(("HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\n" + notFound).getBytes());
+                }
+                output.flush();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-            String contentType = getContentType(path);
-            byte[] content = Files.readAllBytes(file.toPath());
-            out.write(("HTTP/1.1 200 OK\r\nContent-Type: " + contentType + "\r\n\r\n").getBytes());
-            out.write(content);
-            out.flush();
-
-        } catch (IOException e) {
-            System.out.println("Erro ao processar requisição: " + e.getMessage());
         }
     }
 
-    private static void sendResponse(OutputStream out, String status, String contentType, String body) throws IOException {
-        String response = "HTTP/1.1 " + status + "\r\nContent-Type: " + contentType + "\r\n\r\n" + body;
-        out.write(response.getBytes());
-        out.flush();
-    }
-
-    private static String getContentType(String path) {
+    private static String getMimeType(String path) {
         if (path.endsWith(".html")) return "text/html";
         if (path.endsWith(".css")) return "text/css";
         if (path.endsWith(".js")) return "application/javascript";

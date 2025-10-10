@@ -1,101 +1,175 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+/* === CORES E BASE === */
+:root {
+  --preto: #0d0d0d;
+  --cinza: #1e1e1e;
+  --vinho: #8b0000;
+  --neon: #ff1744;
+  --branco: #f5f5f5;
+  --cinza-texto: #c0c0c0;
+}
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 body {
-  background-color: #0f0f0f;
-  color: #f0f0f0;
+  background: var(--preto);
+  color: var(--branco);
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  min-height: 100vh;
-  padding-top: 50px;
 }
 
+/* === CABEÇALHO === */
 header {
-  position: fixed;
+  background: linear-gradient(90deg, var(--vinho), var(--preto));
+  padding: 1.2rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(255, 23, 68, 0.3);
+  position: sticky;
   top: 0;
-  width: 100%;
-  background-color: #121212;
-  text-align: center;
-  padding: 15px;
-  border-bottom: 1px solid #ff003c;
+  z-index: 10;
 }
 
-.logo {
-  color: #ff003c;
+header h1 {
   font-size: 1.8rem;
-  font-weight: 700;
-  text-shadow: 0 0 10px #ff003c;
+  color: var(--branco);
+  letter-spacing: 2px;
+  transition: transform 0.3s ease;
 }
 
-.login-container {
-  background: #1b1b1b;
-  border-radius: 16px;
-  box-shadow: 0 0 15px rgba(255, 0, 60, 0.2);
-  padding: 40px;
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
-  margin-top: 100px;
+header h1:hover {
+  transform: scale(1.05);
+  color: var(--neon);
+  text-shadow: 0 0 8px var(--neon);
 }
 
-.login-container h2 {
-  margin-bottom: 20px;
-  color: #ff003c;
-}
-
-input {
-  width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  border: none;
-  border-radius: 8px;
-  background-color: #2b2b2b;
-  color: #fff;
-  outline: none;
-}
-
-.btn {
-  border: none;
-  border-radius: 8px;
-  padding: 12px 20px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s;
-  margin: 8px;
-}
-
-.empresa {
-  background-color: #ff003c;
-  color: white;
-}
-
-.empresa:hover {
-  box-shadow: 0 0 10px #ff003c;
-}
-
-.estudante {
-  background-color: #444;
-  color: #fff;
-}
-
-.estudante:hover {
-  box-shadow: 0 0 10px #888;
-}
-
-.criar-conta {
-  margin-top: 10px;
-  font-size: 0.9rem;
-}
-
-.criar-conta a {
-  color: #ff003c;
+nav a {
+  color: var(--branco);
+  margin: 0 1rem;
   text-decoration: none;
+  font-weight: 500;
+  transition: 0.3s;
+  position: relative;
+}
+
+nav a:hover {
+  color: var(--neon);
+}
+
+nav a::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: var(--neon);
+  transition: width 0.3s;
+}
+
+nav a:hover::after {
+  width: 100%;
+}
+
+/* === CONTEÚDO === */
+main {
+  flex: 1;
+  padding: 2rem;
+  background: var(--cinza);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+section {
+  max-width: 900px;
+  width: 100%;
+  animation: fadeSlideIn 0.6s ease forwards;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+h2 {
+  font-size: 2.2rem;
+  margin-bottom: 1rem;
+  color: var(--neon);
+  text-shadow: 0 0 8px rgba(255, 23, 68, 0.6);
+  letter-spacing: 1px;
+}
+
+p {
+  color: var(--cinza-texto);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+/* === BOTÕES === */
+button {
+  background: var(--vinho);
+  color: var(--branco);
+  border: none;
+  padding: 0.9rem 1.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin: 0.5rem;
+  transition: 0.3s;
+  box-shadow: 0 0 10px rgba(255, 23, 68, 0.3);
+}
+
+button:hover {
+  background: var(--neon);
+  color: var(--preto);
+  box-shadow: 0 0 20px var(--neon);
+  transform: translateY(-3px) scale(1.05);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* === RODAPÉ === */
+footer {
+  text-align: center;
+  padding: 1rem;
+  background: var(--preto);
+  font-size: 0.9rem;
+  color: var(--cinza-texto);
+}
+
+/* === RESPONSIVIDADE === */
+@media (max-width: 768px) {
+  nav a {
+    margin: 0 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  header h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.7rem;
+  }
+
+  p {
+    font-size: 1rem;
+  }
 }

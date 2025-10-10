@@ -1,29 +1,33 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NEXUS Conexão</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus - Conexão e Desenvolvimento</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="script.js"></script>
 </head>
 <body>
   <header>
-    <h1 class="logo">NEXUS</h1>
+    <h1>Nexus</h1>
+    <nav>
+      <a href="#" onclick="navegar('inicio')">Início</a>
+      <a href="#" onclick="navegar('estudante')">Estudante</a>
+      <a href="#" onclick="navegar('empresa')">Empresa</a>
+      <a href="#" onclick="navegar('projetos')">Projetos</a>
+      <a href="#" onclick="navegar('vagas')">Vagas</a>
+      <a href="#" onclick="navegar('cursos')">Cursos</a>
+      <a href="#" onclick="navegar('contato')">Contato</a>
+      <a href="#" onclick="navegar('sobre')">Sobre</a>
+    </nav>
   </header>
 
-  <main class="login-container">
-    <h2>Entre na sua conta</h2>
-    <input type="email" placeholder="seu.email@exemplo.com">
-    <input type="password" placeholder="••••••••">
-    
-    <div class="perfil-select">
-      <button onclick="navigate('empresa.html')" class="btn empresa">Entrar como Empresa</button>
-      <button onclick="navigate('estudante.html')" class="btn estudante">Entrar como Estudante</button>
-    </div>
-
-    <p class="criar-conta">Não tem conta? <a href="#" onclick="alert('Função desativada na demo')">Criar conta gratuita</a></p>
+  <main id="conteudo">
+    <!-- conteúdo dinâmico -->
   </main>
 
-  <script src="script.js"></script>
+  <footer>
+    © 2025 Nexus - Conectando Estudantes e Oportunidades
+  </footer>
 </body>
 </html>
