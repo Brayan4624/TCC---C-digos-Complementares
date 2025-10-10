@@ -1,47 +1,52 @@
 import java.io.*;
 import java.net.*;
-import java.nio.file.*;
 
 public class AppServer {
     public static void main(String[] args) throws IOException {
-        int port = 8080;
-        ServerSocket serverSocket = new ServerSocket(port);
-        System.out.println("Servidor rodando em http://localhost:" + port);
+        ServerSocket server = new ServerSocket(8080);
+        System.out.println("Servidor rodando em http://localhost:8080");
 
-        while (true) {
-            try (Socket socket = serverSocket.accept()) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                OutputStream output = socket.getOutputStream();
+        while(true){
+            Socket client = server.accept();
+            BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
 
-                String line = reader.readLine();
-                if (line == null) continue;
+            String line = in.readLine();
+            if(line == null) continue;
+            String[] request = line.split(" ");
+            String file = "index.html";
 
-                String[] parts = line.split(" ");
-                if (parts.length < 2) continue;
-                String path = parts[1];
-                if (path.equals("/")) path = "/index.html";
-
-                File file = new File("." + path);
-                if (file.exists() && !file.isDirectory()) {
-                    byte[] content = Files.readAllBytes(file.toPath());
-                    String mime = getMimeType(path);
-                    output.write(("HTTP/1.1 200 OK\r\nContent-Type: " + mime + "\r\n\r\n").getBytes());
-                    output.write(content);
-                } else {
-                    String notFound = "<h1 style='color:red;'>404 - Página não encontrada</h1>";
-                    output.write(("HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\n" + notFound).getBytes());
+            if(request.length > 1){
+                switch(request[1]){
+                    case "/about.html": file="about.html"; break;
+                    case "/services.html": file="services.html"; break;
+                    case "/contact.html": file="contact.html"; break;
+                    case "/signup.html": file="signup.html"; break;
+                    default: file="index.html";
                 }
-                output.flush();
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-        }
-    }
 
-    private static String getMimeType(String path) {
-        if (path.endsWith(".html")) return "text/html";
-        if (path.endsWith(".css")) return "text/css";
-        if (path.endsWith(".js")) return "application/javascript";
-        return "text/plain";
+            File f = new File(file);
+            if(f.exists()){
+                out.write("HTTP/1.1 200 OK\r\n");
+                if(file.endsWith(".css")) out.write("Content-Type: text/css\r\n");
+                else if(file.endsWith(".js")) out.write("Content-Type: application/javascript\r\n");
+                else out.write("Content-Type: text/html\r\n");
+                out.write("\r\n");
+
+                FileInputStream fis = new FileInputStream(f);
+                byte[] buffer = new byte[1024];
+                int bytes;
+                while((bytes = fis.read(buffer)) != -1){
+                    out.write(new String(buffer, 0, bytes));
+                }
+                fis.close();
+            } else {
+                out.write("HTTP/1.1 404 Not Found\r\n\r\n<h1>Página não encontrada</h1>");
+            }
+
+            out.flush();
+            client.close();
+        }
     }
 }
