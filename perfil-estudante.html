@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro Estudante - NEXUS</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Seção da Marca -->
+        <div class="brand-section">
+            <div class="brand-tag">Perfil Estudante</div>
+            <h1>NEXUS</h1>
+            <h2>Conectando talentos e oportunidades</h2>
+            
+            <div class="brand-features">
+                <div class="feature">Encontre oportunidades exclusivas</div>
+                <div class="feature">Conecte-se com empresas inovadoras</div>
+                <div class="feature">Desenvolva sua carreira</div>
+            </div>
+        </div>
+        
+        <!-- Seção de Cadastro Estudante -->
+        <div class="content-section">
+            <div class="signup-form-screen active-screen">
+                <div class="login-header">
+                    <h3>Cadastro Estudante</h3>
+                    <p>Complete seu perfil de estudante</p>
+                </div>
+                
+                <form id="estudanteForm">
+                    <div class="form-group">
+                        <label for="nomeCompleto">Nome Completo *</label>
+                        <input type="text" id="nomeCompleto" placeholder="Seu nome completo" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="emailEstudante">Email *</label>
+                        <input type="email" id="emailEstudante" placeholder="seu.email@universidade.edu" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="instituicao">Instituição de Ensino *</label>
+                        <input type="text" id="instituicao" placeholder="Nome da sua faculdade/universidade" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="curso">Curso *</label>
+                        <input type="text" id="curso" placeholder="Seu curso" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="semestre">Semestre/Período *</label>
+                        <input type="number" id="semestre" placeholder="Ex: 4" min="1" max="20" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="telefone">Telefone</label>
+                        <input type="tel" id="telefone" placeholder="(11) 99999-9999">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="senhaEstudante">Senha *</label>
+                        <input type="password" id="senhaEstudante" placeholder="••••••••" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmarSenha">Confirmar Senha *</label>
+                        <input type="password" id="confirmarSenha" placeholder="••••••••" required>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button type="button" class="back-btn" onclick="window.location.href='index.html'">
+                            ← Voltar
+                        </button>
+                        <button type="submit" class="continue-btn">
+                            Criar Conta Estudante
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="footer-text">
+                    NEXUS - Conectando talentos e oportunidades<br>
+                    Abrista núcleo • A. Perfil Escolante
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="perfil-estudante.js"></script>
+</body>
+</html>

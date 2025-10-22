@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro Empresa - NEXUS</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Seção da Marca -->
+        <div class="brand-section">
+            <div class="brand-tag">Perfil Empresa</div>
+            <h1>NEXUS</h1>
+            <h2>Conectando talentos e oportunidades</h2>
+            
+            <div class="brand-features">
+                <div class="feature">Encontre os melhores talentos</div>
+                <div class="feature">Divulgue suas vagas</div>
+                <div class="feature">Conecte-se com profissionais</div>
+            </div>
+        </div>
+        
+        <!-- Seção de Cadastro Empresa -->
+        <div class="content-section">
+            <div class="signup-form-screen active-screen">
+                <div class="login-header">
+                    <h3>Cadastro Empresa</h3>
+                    <p>Complete o perfil da sua empresa</p>
+                </div>
+                
+                <form id="empresaForm">
+                    <div class="form-group">
+                        <label for="nomeEmpresa">Nome da Empresa *</label>
+                        <input type="text" id="nomeEmpresa" placeholder="Razão social da empresa" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="emailEmpresa">Email Corporativo *</label>
+                        <input type="email" id="emailEmpresa" placeholder="contato@empresa.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cnpj">CNPJ *</label>
+                        <input type="text" id="cnpj" placeholder="00.000.000/0000-00" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="ramoAtuacao">Ramo de Atuação *</label>
+                        <select id="ramoAtuacao" required>
+                            <option value="">Selecione o ramo</option>
+                            <option value="tecnologia">Tecnologia</option>
+                            <option value="saude">Saúde</option>
+                            <option value="educacao">Educação</option>
+                            <option value="financas">Finanças</option>
+                            <option value="varejo">Varejo</option>
+                            <option value="industria">Indústria</option>
+                            <option value="outros">Outros</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tamanhoEmpresa">Tamanho da Empresa *</label>
+                        <select id="tamanhoEmpresa" required>
+                            <option value="">Selecione o tamanho</option>
+                            <option value="startup">Startup (1-10)</option>
+                            <option value="pequena">Pequena (11-50)</option>
+                            <option value="media">Média (51-200)</option>
+                            <option value="grande">Grande (201+)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="telefoneEmpresa">Telefone *</label>
+                        <input type="tel" id="telefoneEmpresa" placeholder="(11) 99999-9999" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="senhaEmpresa">Senha *</label>
+                        <input type="password" id="senhaEmpresa" placeholder="••••••••" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmarSenhaEmpresa">Confirmar Senha *</label>
+                        <input type="password" id="confirmarSenhaEmpresa" placeholder="••••••••" required>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button type="button" class="back-btn" onclick="window.location.href='index.html'">
+                            ← Voltar
+                        </button>
+                        <button type="submit" class="continue-btn">
+                            Criar Conta Empresa
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="footer-text">
+                    NEXUS - Conectando talentos e oportunidades<br>
+                    Abrista núcleo • A. Perfil Escolante
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="perfil-empresa.js"></script>
+</body>
+</html>

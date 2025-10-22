@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS - Conectando talentos e oportunidades</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Seção da Marca -->
+        <div class="brand-section">
+            <div class="brand-tag" id="brandTag">Conectando talentos e oportunidades</div>
+            <h1>NEXUS</h1>
+            
+            <div class="brand-features">
+                <div class="feature">Encontre os melhores talentos do mercado</div>
+                <div class="feature">Oportunidades exclusivas para sua carreira</div>
+                <div class="feature">Conexões que transformam vidas</div>
+            </div>
+        </div>
+        
+        <!-- Seção de Conteúdo -->
+        <div class="content-section">
+            <!-- Tela de Login -->
+            <div class="login-screen active-screen" id="loginScreen">
+                <div class="login-header">
+                    <h3>Entrar</h3>
+                </div>
+                
+                <button class="sso-btn">
+                    <span class="sso-icon">🔒</span>
+                    <span>Entrar com Samba</span>
+                </button>
+                
+                <div class="signup-link">
+                    Ainda não tem uma conta? <a id="showCreateAccount">Criar conta gratuita</a>
+                </div>
+                
+                <div class="footer-text">
+                    NEXUS - Conectando talentos e oportunidades<br>
+                    Abrista núcleo • A. Perfil Escolante
+                </div>
+            </div>
+
+            <!-- Tela de Escolha de Tipo de Conta -->
+            <div class="create-account-screen" id="createAccountScreen">
+                <div class="login-header">
+                    <h3>Criar Conta</h3>
+                    <p>Junte-se ao NEXUS</p>
+                </div>
+                
+                <div class="account-type-selector">
+                    <h4>Escolha o tipo de conta</h4>
+                    <p class="subtitle">Selecione como você vai usar o NEXUS.</p>
+                    
+                    <div class="account-options">
+                        <div class="account-option" id="optionEstudante">
+                            <div class="option-content">
+                                <div class="radio-wrapper">
+                                    <input type="radio" name="accountType" id="radioEstudante">
+                                    <label for="radioEstudante" class="radio-label"></label>
+                                </div>
+                                <div class="option-text">
+                                    <div class="option-title">Estudante/Estagiário</div>
+                                    <div class="option-description">Buscar vagas e oportunidades</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="account-option" id="optionEmpresa">
+                            <div class="option-content">
+                                <div class="radio-wrapper">
+                                    <input type="radio" name="accountType" id="radioEmpresa">
+                                    <label for="radioEmpresa" class="radio-label"></label>
+                                </div>
+                                <div class="option-text">
+                                    <div class="option-title">Empresa</div>
+                                    <div class="option-description">Publicar vagas e encontrar talentos</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="back-btn" id="backToLogin">
+                        ← Voltar para login
+                    </button>
+                    
+                    <button class="continue-btn" id="continueBtn" disabled>
+                        Continuar
+                    </button>
+                </div>
+                
+                <div class="signup-link">
+                    Já tem uma conta? <a id="showLogin">Fazer login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
