@@ -1,479 +1,7 @@
-// script.js
-
-// Configurações e constantes
-const CONFIG = {
-    API_BASE_URL: 'https://api.nexus.com/v1',
-    SESSION_TIMEOUT: 30 * 60 * 1000, // 30 minutos
-    PASSWORD_MIN_LENGTH: 8,
-    EMAIL_REGEX: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-    SUCCESS_REDIRECT_DELAY: 2000
-};
-
-// Estado da aplicação
-let appState = {
-    currentProfile: 'empresa',
-    isAuthenticated: false,
-    userData: null,
-    sessionTimer: null
-};
-
-// Elementos DOM
-const DOM = {
-    profileOptions: document.querySelectorAll('.profile-option'),
-    loginForm: document.getElementById('loginForm'),
-    emailInput: document.getElementById('email'),
-    passwordInput: document.getElementById('password'),
-    loginBtn: document.querySelector('.login-btn'),
-    ssoBtn: document.querySelector('.sso-btn'),
-    signupLink: document.querySelector('.signup-link a'),
-    container: document.querySelector('.container')
-};
-
-// Inicialização da aplicação
-document.addEventListener('DOMContentLoaded', function() {
-    initializeApp();
-    setupEventListeners();
-    checkExistingSession();
-});
+// Continuação do script.js
 
 /**
- * Inicializa a aplicação
- */
-function initializeApp() {
-    console.log('🚀 NEXUS - Inicializando aplicação');
-    
-    // Verifica se todos os elementos necessários estão presentes
-    if (!DOM.loginForm || !DOM.emailInput || !DOM.passwordInput) {
-        console.error('❌ Elementos do formulário não encontrados');
-        showError('Erro na inicialização da aplicação. Recarregue a página.');
-        return;
-    }
-    
-    // Configura placeholder dinâmico baseado no perfil
-    updatePlaceholders();
-    
-    // Aplica máscara de email se houver um valor padrão
-    if (DOM.emailInput.value) {
-        formatEmailInput(DOM.emailInput);
-    }
-}
-
-/**
- * Configura os event listeners
- */
-function setupEventListeners() {
-    // Seleção de perfil
-    DOM.profileOptions.forEach(option => {
-        option.addEventListener('click', handleProfileSelection);
-    });
-    
-    // Formulário de login
-    DOM.loginForm.addEventListener('submit', handleLoginSubmit);
-    
-    // Validação em tempo real
-    DOM.emailInput.addEventListener('input', handleEmailInput);
-    DOM.emailInput.addEventListener('blur', validateEmail);
-    DOM.passwordInput.addEventListener('input', handlePasswordInput);
-    DOM.passwordInput.addEventListener('blur', validatePassword);
-    
-    // Botão SSO
-    DOM.ssoBtn.addEventListener('click', handleSSOLogin);
-    
-    // Link de cadastro
-    DOM.signupLink.addEventListener('click', handleSignupRedirect);
-    
-    // Teclas de atalho
-    document.addEventListener('keydown', handleKeyboardShortcuts);
-    
-    // Prevenção de copiar/colar na senha (opcional)
-    DOM.passwordInput.addEventListener('paste', preventPasswordPaste);
-}
-
-/**
- * Manipula a seleção de perfil
- */
-function handleProfileSelection(event) {
-    const selectedOption = event.currentTarget;
-    const profileType = selectedOption.id;
-    
-    // Remove a classe active de todos
-    DOM.profileOptions.forEach(opt => {
-        opt.classList.remove('active');
-        opt.setAttribute('aria-selected', 'false');
-    });
-    
-    // Adiciona a classe active apenas ao clicado
-    selectedOption.classList.add('active');
-    selectedOption.setAttribute('aria-selected', 'true');
-    
-    // Atualiza o estado
-    appState.currentProfile = profileType;
-    
-    // Atualiza placeholders e textos
-    updatePlaceholders();
-    
-    // Feedback visual
-    showFeedback(`Perfil ${getProfileDisplayName(profileType)} selecionado`);
-    
-    console.log(`👤 Perfil alterado para: ${profileType}`);
-}
-
-/**
- * Manipula o envio do formulário de login
- */
-async function handleLoginSubmit(event) {
-    event.preventDefault();
-    
-    // Validação dos campos
-    if (!validateForm()) {
-        return;
-    }
-    
-    // Prepara dados do formulário
-    const formData = {
-        email: DOM.emailInput.value.trim(),
-        password: DOM.passwordInput.value,
-        profileType: appState.currentProfile,
-        timestamp: new Date().toISOString()
-    };
-    
-    // Mostra estado de carregamento
-    setLoadingState(true);
-    
-    try {
-        // Simula uma requisição de API
-        const response = await simulateLoginAPI(formData);
-        
-        if (response.success) {
-            await handleSuccessfulLogin(response.data);
-        } else {
-            handleLoginError(response.error);
-        }
-    } catch (error) {
-        handleLoginError('Erro de conexão. Tente novamente.');
-        console.error('❌ Erro no login:', error);
-    } finally {
-        setLoadingState(false);
-    }
-}
-
-/**
- * Simula uma chamada de API de login
- */
-async function simulateLoginAPI(formData) {
-    // Simula delay de rede
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Validações simuladas
-    if (!CONFIG.EMAIL_REGEX.test(formData.email)) {
-        return {
-            success: false,
-            error: 'Formato de email inválido'
-        };
-    }
-    
-    if (formData.password.length < CONFIG.PASSWORD_MIN_LENGTH) {
-        return {
-            success: false,
-            error: `A senha deve ter pelo menos ${CONFIG.PASSWORD_MIN_LENGTH} caracteres`
-        };
-    }
-    
-    // Simula credenciais válidas
-    const validCredentials = {
-        'empresa': ['empresa@nexus.com', 'empresa123'],
-        'estudantil': ['estudante@nexus.com', 'estudante123']
-    };
-    
-    const [validEmail, validPassword] = validCredentials[formData.profileType] || [];
-    
-    if (formData.email === validEmail && formData.password === validPassword) {
-        return {
-            success: true,
-            data: {
-                user: {
-                    id: Math.random().toString(36).substr(2, 9),
-                    email: formData.email,
-                    name: formData.profileType === 'empresa' ? 'Empresa Nexus' : 'Estudante Nexus',
-                    profile: formData.profileType,
-                    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.profileType === 'empresa' ? 'Empresa' : 'Estudante')}&background=1a2a6c&color=fff`
-                },
-                token: 'nexus_token_' + Math.random().toString(36).substr(2),
-                expiresIn: CONFIG.SESSION_TIMEOUT
-            }
-        };
-    }
-    
-    return {
-        success: false,
-        error: 'Email ou senha incorretos'
-    };
-}
-
-/**
- * Manipula login bem-sucedido
- */
-async function handleSuccessfulLogin(userData) {
-    // Atualiza estado da aplicação
-    appState.isAuthenticated = true;
-    appState.userData = userData;
-    
-    // Salva sessão
-    saveSession(userData);
-    
-    // Inicia timer de sessão
-    startSessionTimer();
-    
-    // Mostra mensagem de sucesso
-    showSuccess(`Bem-vindo(a) de volta, ${userData.user.name}!`);
-    
-    // Log para debug
-    console.log('✅ Login realizado com sucesso:', userData);
-    
-    // Redireciona após delay
-    setTimeout(() => {
-        redirectToDashboard();
-    }, CONFIG.SUCCESS_REDIRECT_DELAY);
-}
-
-/**
- * Manipula erro no login
- */
-function handleLoginError(errorMessage) {
-    showError(errorMessage);
-    
-    // Adiciona classe de erro aos inputs
-    DOM.emailInput.classList.add('error');
-    DOM.passwordInput.classList.add('error');
-    
-    // Remove classes de erro após 3 segundos
-    setTimeout(() => {
-        DOM.emailInput.classList.remove('error');
-        DOM.passwordInput.classList.remove('error');
-    }, 3000);
-    
-    // Foca no campo de email para correção
-    DOM.emailInput.focus();
-}
-
-/**
- * Manipula login SSO
- */
-function handleSSOLogin() {
-    showFeedback('Redirecionando para autenticação SSO...');
-    
-    // Simula redirecionamento SSO
-    setTimeout(() => {
-        // Em um ambiente real, isso redirecionaria para o provedor SSO
-        showInfo('Funcionalidade SSO em desenvolvimento');
-        console.log('🔐 Redirecionando para SSO...');
-    }, 1000);
-}
-
-/**
- * Manipula redirecionamento para cadastro
- */
-function handleSignupRedirect(event) {
-    event.preventDefault();
-    
-    showFeedback('Redirecionando para criação de conta...');
-    
-    // Simula redirecionamento para página de cadastro
-    setTimeout(() => {
-        // Em um ambiente real, isso redirecionaria para a página de cadastro
-        window.location.href = '/signup?profile=' + appState.currentProfile;
-    }, 500);
-}
-
-/**
- * Validação do formulário
- */
-function validateForm() {
-    const emailValid = validateEmail();
-    const passwordValid = validatePassword();
-    
-    return emailValid && passwordValid;
-}
-
-/**
- * Validação de email
- */
-function validateEmail() {
-    const email = DOM.emailInput.value.trim();
-    
-    if (!email) {
-        showFieldError(DOM.emailInput, 'Email é obrigatório');
-        return false;
-    }
-    
-    if (!CONFIG.EMAIL_REGEX.test(email)) {
-        showFieldError(DOM.emailInput, 'Formato de email inválido');
-        return false;
-    }
-    
-    clearFieldError(DOM.emailInput);
-    return true;
-}
-
-/**
- * Validação de senha
- */
-function validatePassword() {
-    const password = DOM.passwordInput.value;
-    
-    if (!password) {
-        showFieldError(DOM.passwordInput, 'Senha é obrigatória');
-        return false;
-    }
-    
-    if (password.length < CONFIG.PASSWORD_MIN_LENGTH) {
-        showFieldError(DOM.passwordInput, `A senha deve ter pelo menos ${CONFIG.PASSWORD_MIN_LENGTH} caracteres`);
-        return false;
-    }
-    
-    clearFieldError(DOM.passwordInput);
-    return true;
-}
-
-/**
- * Manipula input de email
- */
-function handleEmailInput(event) {
-    formatEmailInput(event.target);
-    clearFieldError(DOM.emailInput);
-}
-
-/**
- * Manipula input de senha
- */
-function handlePasswordInput(event) {
-    updatePasswordStrength(event.target.value);
-    clearFieldError(DOM.passwordInput);
-}
-
-/**
- * Formata input de email
- */
-function formatEmailInput(input) {
-    // Remove espaços e converte para minúsculas
-    input.value = input.value.trim().toLowerCase();
-}
-
-/**
- * Atualiza força da senha (visual)
- */
-function updatePasswordStrength(password) {
-    // Implementação básica de força de senha
-    let strength = 0;
-    
-    if (password.length >= 8) strength++;
-    if (/[A-Z]/.test(password)) strength++;
-    if (/[0-9]/.test(password)) strength++;
-    if (/[^A-Za-z0-9]/.test(password)) strength++;
-    
-    // Atualiza visualmente (poderia ser implementado com uma barra de progresso)
-    DOM.passwordInput.style.borderColor = 
-        strength === 0 ? '#e0e0e0' :
-        strength <= 2 ? '#ff6b6b' :
-        strength <= 3 ? '#fdbb2d' : '#51cf66';
-}
-
-/**
- * Atualiza placeholders baseados no perfil
- */
-function updatePlaceholders() {
-    const profile = appState.currentProfile;
-    
-    const placeholders = {
-        empresa: {
-            email: 'contato@empresa.com',
-            hint: 'Entre para gerenciar suas vagas e talentos'
-        },
-        estudantil: {
-            email: 'aluno@universidade.edu',
-            hint: 'Entre para encontrar oportunidades incríveis'
-        }
-    };
-    
-    const current = placeholders[profile] || placeholders.empresa;
-    
-    DOM.emailInput.placeholder = current.email;
-    
-    // Atualiza hint se existir no DOM
-    const hintElement = document.querySelector('.login-section p');
-    if (hintElement) {
-        hintElement.textContent = current.hint;
-    }
-}
-
-/**
- * Retorna nome display do perfil
- */
-function getProfileDisplayName(profileType) {
-    const names = {
-        empresa: 'Empresa',
-        estudantil: 'Estudantil'
-    };
-    
-    return names[profileType] || 'Desconhecido';
-}
-
-/**
- * Manipula atalhos de teclado
- */
-function handleKeyboardShortcuts(event) {
-    // Ctrl + Enter para submeter formulário
-    if (event.ctrlKey && event.key === 'Enter') {
-        event.preventDefault();
-        DOM.loginForm.dispatchEvent(new Event('submit'));
-    }
-    
-    // Alt + 1 para perfil empresa
-    if (event.altKey && event.key === '1') {
-        event.preventDefault();
-        document.getElementById('empresa').click();
-    }
-    
-    // Alt + 2 para perfil estudantil
-    if (event.altKey && event.key === '2') {
-        event.preventDefault();
-        document.getElementById('estudantil').click();
-    }
-}
-
-/**
- * Previne colar na senha (opcional)
- */
-function preventPasswordPaste(event) {
-    // event.preventDefault(); // Descomente se quiser prevenir colar
-    showFeedback('Colar na senha não é permitido por segurança');
-}
-
-/**
- * Define estado de carregamento
- */
-function setLoadingState(loading) {
-    if (loading) {
-        DOM.loginBtn.classList.add('loading');
-        DOM.loginBtn.disabled = true;
-        DOM.loginBtn.innerHTML = '<span class="loading-spinner"></span> Entrando...';
-    } else {
-        DOM.loginBtn.classList.remove('loading');
-        DOM.loginBtn.disabled = false;
-        DOM.loginBtn.textContent = 'Entrar';
-    }
-    
-    // Desabilita outros controles durante o loading
-    DOM.profileOptions.forEach(opt => {
-        opt.style.pointerEvents = loading ? 'none' : 'auto';
-    });
-    
-    DOM.ssoBtn.disabled = loading;
-    DOM.signupLink.style.pointerEvents = loading ? 'none' : 'auto';
-}
-
-/**
- * Sistema de mensagens
+ * Sistema de mensagens e feedback
  */
 function showMessage(message, type = 'info') {
     // Remove mensagens existentes
@@ -481,39 +9,78 @@ function showMessage(message, type = 'info') {
     if (existingMessage) {
         existingMessage.remove();
     }
-    
+
+    // Cores e ícones para cada tipo
+    const messageConfig = {
+        success: {
+            color: '#22c55e',
+            bgColor: 'rgba(34, 197, 94, 0.1)',
+            borderColor: 'rgba(34, 197, 94, 0.3)',
+            icon: '✅'
+        },
+        error: {
+            color: '#ef4444',
+            bgColor: 'rgba(239, 68, 68, 0.1)',
+            borderColor: 'rgba(239, 68, 68, 0.3)',
+            icon: '❌'
+        },
+        info: {
+            color: '#3b82f6',
+            bgColor: 'rgba(59, 130, 246, 0.1)',
+            borderColor: 'rgba(59, 130, 246, 0.3)',
+            icon: 'ℹ️'
+        },
+        feedback: {
+            color: '#ec4899',
+            bgColor: 'rgba(236, 72, 153, 0.1)',
+            borderColor: 'rgba(236, 72, 153, 0.3)',
+            icon: '💡'
+        }
+    };
+
+    const config = messageConfig[type] || messageConfig.info;
+
     // Cria nova mensagem
     const messageDiv = document.createElement('div');
     messageDiv.className = `message-overlay message-${type}`;
     messageDiv.innerHTML = `
         <div class="message-content">
-            <span class="message-icon">${getMessageIcon(type)}</span>
+            <span class="message-icon">${config.icon}</span>
             <span class="message-text">${message}</span>
             <button class="message-close" onclick="this.parentElement.parentElement.remove()">×</button>
         </div>
     `;
-    
-    // Adiciona estilos
+
+    // Estilos da mensagem
     messageDiv.style.cssText = `
         position: fixed;
         top: 20px;
         right: 20px;
-        background: ${getMessageColor(type)};
-        color: white;
-        padding: 15px 20px;
-        border-radius: 8px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        background: ${config.bgColor};
+        color: ${config.color};
+        border: 1px solid ${config.borderColor};
+        padding: 16px 20px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         z-index: 10000;
-        animation: slideInRight 0.3s ease;
+        animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        backdrop-filter: blur(10px);
         max-width: 400px;
+        font-size: 0.9rem;
+        font-weight: 500;
     `;
-    
+
     document.body.appendChild(messageDiv);
-    
+
     // Remove automaticamente após 5 segundos
     setTimeout(() => {
         if (messageDiv.parentElement) {
-            messageDiv.remove();
+            messageDiv.style.animation = 'slideOutRight 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+            setTimeout(() => {
+                if (messageDiv.parentElement) {
+                    messageDiv.remove();
+                }
+            }, 400);
         }
     }, 5000);
 }
@@ -534,26 +101,6 @@ function showFeedback(message) {
     showMessage(message, 'feedback');
 }
 
-function getMessageIcon(type) {
-    const icons = {
-        success: '✅',
-        error: '❌',
-        info: 'ℹ️',
-        feedback: '💡'
-    };
-    return icons[type] || '💡';
-}
-
-function getMessageColor(type) {
-    const colors = {
-        success: '#51cf66',
-        error: '#ff6b6b',
-        info: '#339af0',
-        feedback: '#fdbb2d'
-    };
-    return colors[type] || '#339af0';
-}
-
 /**
  * Mostra erro em campo específico
  */
@@ -566,9 +113,13 @@ function showFieldError(input, message) {
     errorDiv.className = 'field-error';
     errorDiv.textContent = message;
     errorDiv.style.cssText = `
-        color: #ff6b6b;
+        color: #ef4444;
         font-size: 0.8rem;
-        margin-top: 5px;
+        margin-top: 8px;
+        padding: 4px 8px;
+        background: rgba(239, 68, 68, 0.1);
+        border-radius: 4px;
+        border-left: 3px solid #ef4444;
     `;
     
     input.parentNode.appendChild(errorDiv);
@@ -587,36 +138,201 @@ function clearFieldError(input) {
 }
 
 /**
+ * Limpa todos os erros dos campos
+ */
+function clearFieldErrors() {
+    const errors = document.querySelectorAll('.field-error');
+    errors.forEach(error => error.remove());
+    
+    const errorInputs = document.querySelectorAll('.error');
+    errorInputs.forEach(input => input.classList.remove('error'));
+}
+
+/**
+ * Feedback de força da senha
+ */
+function showPasswordFeedback(feedback) {
+    let feedbackDiv = document.querySelector('.password-feedback');
+    
+    if (!feedbackDiv) {
+        feedbackDiv = document.createElement('div');
+        feedbackDiv.className = 'password-feedback';
+        DOM.passwordInput.parentNode.appendChild(feedbackDiv);
+    }
+    
+    feedbackDiv.innerHTML = feedback.map(item => 
+        `<div class="feedback-item">• ${item}</div>`
+    ).join('');
+    
+    feedbackDiv.style.cssText = `
+        margin-top: 8px;
+        padding: 12px;
+        background: rgba(236, 72, 153, 0.05);
+        border: 1px solid rgba(236, 72, 153, 0.2);
+        border-radius: 8px;
+        font-size: 0.8rem;
+        color: #a3a3a3;
+    `;
+}
+
+function clearPasswordFeedback() {
+    const feedbackDiv = document.querySelector('.password-feedback');
+    if (feedbackDiv) {
+        feedbackDiv.remove();
+    }
+}
+
+/**
+ * Efeitos visuais
+ */
+function showVisualFeedback(element) {
+    // Efeito de ripple
+    const ripple = document.createElement('div');
+    ripple.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(236, 72, 153, 0.3);
+        transform: translate(-50%, -50%);
+        animation: ripple 0.6s ease-out;
+    `;
+    
+    element.style.position = 'relative';
+    element.appendChild(ripple);
+    
+    setTimeout(() => {
+        ripple.remove();
+    }, 600);
+}
+
+function showConfettiEffect() {
+    const confettiCount = 30;
+    const container = document.querySelector('.container');
+    
+    for (let i = 0; i < confettiCount; i++) {
+        createConfetti(container);
+    }
+}
+
+function createConfetti(container) {
+    const confetti = document.createElement('div');
+    confetti.innerHTML = ['🎉', '✨', '🌟', '💫', '⭐'][Math.floor(Math.random() * 5)];
+    confetti.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        font-size: 1.2rem;
+        pointer-events: none;
+        z-index: 1000;
+        animation: confetti 1.5s ease-out forwards;
+    `;
+    
+    const angle = Math.random() * Math.PI * 2;
+    const velocity = 2 + Math.random() * 2;
+    const rotation = Math.random() * 360;
+    
+    confetti.style.setProperty('--angle', `${angle}rad`);
+    confetti.style.setProperty('--velocity', velocity);
+    confetti.style.setProperty('--rotation', `${rotation}deg`);
+    
+    container.appendChild(confetti);
+    
+    setTimeout(() => {
+        confetti.remove();
+    }, 1500);
+}
+
+/**
+ * Sistema de áudio
+ */
+function playSelectionSound() {
+    // Simula som de seleção (em produção, usar Audio API)
+    console.log('🔊 Play selection sound');
+}
+
+function playSuccessSound() {
+    console.log('🔊 Play success sound');
+}
+
+function playErrorSound() {
+    console.log('🔊 Play error sound');
+}
+
+function playClickSound() {
+    console.log('🔊 Play click sound');
+}
+
+/**
  * Gerenciamento de sessão
  */
 function saveSession(userData) {
     const sessionData = {
         user: userData.user,
         token: userData.token,
-        expires: Date.now() + userData.expiresIn
+        permissions: userData.permissions,
+        expires: Date.now() + userData.expiresIn,
+        lastActivity: Date.now()
     };
     
-    localStorage.setItem('nexus_session', JSON.stringify(sessionData));
+    try {
+        localStorage.setItem('nexus_session', JSON.stringify(sessionData));
+        console.log('💾 Sessão salva com sucesso');
+    } catch (error) {
+        console.error('❌ Erro ao salvar sessão:', error);
+    }
 }
 
 function checkExistingSession() {
-    const sessionData = localStorage.getItem('nexus_session');
-    
-    if (sessionData) {
-        const session = JSON.parse(sessionData);
+    try {
+        const sessionData = localStorage.getItem('nexus_session');
         
-        if (session.expires > Date.now()) {
-            // Sessão válida
-            appState.isAuthenticated = true;
-            appState.userData = { user: session.user, token: session.token };
-            startSessionTimer();
-            console.log('🔑 Sessão recuperada:', session.user.name);
-        } else {
-            // Sessão expirada
-            localStorage.removeItem('nexus_session');
-            console.log('⏰ Sessão expirada');
+        if (sessionData) {
+            const session = JSON.parse(sessionData);
+            
+            if (session.expires > Date.now()) {
+                // Sessão válida
+                appState.isAuthenticated = true;
+                appState.userData = { user: session.user, token: session.token };
+                startSessionTimer();
+                console.log('🔑 Sessão recuperada:', session.user.name);
+                
+                // Mostra indicador de sessão ativa
+                showSessionIndicator();
+            } else {
+                // Sessão expirada
+                localStorage.removeItem('nexus_session');
+                console.log('⏰ Sessão expirada');
+            }
         }
+    } catch (error) {
+        console.error('❌ Erro ao verificar sessão:', error);
+        localStorage.removeItem('nexus_session');
     }
+}
+
+function showSessionIndicator() {
+    const indicator = document.createElement('div');
+    indicator.className = 'session-indicator';
+    indicator.innerHTML = '🔒 Sessão Ativa';
+    indicator.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background: rgba(34, 197, 94, 0.1);
+        color: #22c55e;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        z-index: 9999;
+        backdrop-filter: blur(10px);
+    `;
+    
+    document.body.appendChild(indicator);
 }
 
 function startSessionTimer() {
@@ -625,7 +341,7 @@ function startSessionTimer() {
     }
     
     appState.sessionTimer = setTimeout(() => {
-        showInfo('Sua sessão expirou. Faça login novamente.');
+        showInfo('Sua sessão expirou por inatividade. Faça login novamente.');
         logout();
     }, CONFIG.SESSION_TIMEOUT);
 }
@@ -634,10 +350,21 @@ function logout() {
     appState.isAuthenticated = false;
     appState.userData = null;
     
-    localStorage.removeItem('nexus_session');
+    try {
+        localStorage.removeItem('nexus_session');
+    } catch (error) {
+        console.error('❌ Erro ao remover sessão:', error);
+    }
     
     if (appState.sessionTimer) {
         clearTimeout(appState.sessionTimer);
+        appState.sessionTimer = null;
+    }
+    
+    // Remove indicador de sessão
+    const indicator = document.querySelector('.session-indicator');
+    if (indicator) {
+        indicator.remove();
     }
     
     console.log('👋 Usuário deslogado');
@@ -658,14 +385,104 @@ function redirectToDashboard() {
     // Em um ambiente real:
     // window.location.href = url;
     
-    // Simulação
+    // Simulação para demonstração
     showSuccess(`Redirecionando para o dashboard ${getProfileDisplayName(profile)}...`);
     console.log(`🔄 Redirecionando para: ${url}`);
+    
+    // Simula o redirecionamento
+    setTimeout(() => {
+        document.body.style.opacity = '0';
+        document.body.style.transition = 'opacity 0.5s ease';
+        
+        setTimeout(() => {
+            alert(`🎯 Redirecionado para: ${url}\n\n(Em produção, isso levaria para o dashboard real)`);
+            document.body.style.opacity = '1';
+        }, 500);
+    }, 1000);
+}
+
+/**
+ * Tooltips
+ */
+function initializeTooltips() {
+    const tooltips = {
+        empresa: 'Para empresas que buscam talentos',
+        estudantil: 'Para estudantes em busca de oportunidades',
+        email: 'Use o email cadastrado no NEXUS',
+        password: 'Sua senha deve ter pelo menos 8 caracteres',
+        sso: 'Autenticação segura com Single Sign-On'
+    };
+    
+    // Adiciona tooltips aos elementos
+    Object.keys(tooltips).forEach(key => {
+        const element = document.querySelector(`[data-tooltip="${key}"]`);
+        if (element) {
+            element.addEventListener('mouseenter', showTooltip);
+            element.addEventListener('mouseleave', hideTooltip);
+        }
+    });
+}
+
+function showTooltip(event) {
+    const tooltipText = event.target.getAttribute('data-tooltip');
+    const tooltip = document.createElement('div');
+    tooltip.className = 'tooltip';
+    tooltip.textContent = getTooltipContent(tooltipText);
+    
+    tooltip.style.cssText = `
+        position: absolute;
+        background: rgba(0, 0, 0, 0.9);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        white-space: nowrap;
+        z-index: 10000;
+        pointer-events: none;
+        transform: translateY(-100%) translateX(-50%);
+        left: 50%;
+        top: -8px;
+    `;
+    
+    event.target.style.position = 'relative';
+    event.target.appendChild(tooltip);
+}
+
+function hideTooltip(event) {
+    const tooltip = event.target.querySelector('.tooltip');
+    if (tooltip) {
+        tooltip.remove();
+    }
+}
+
+function getTooltipContent(key) {
+    const contents = {
+        empresa: 'Para empresas que buscam talentos',
+        estudantil: 'Para estudantes em busca de oportunidades',
+        email: 'Use o email cadastrado no NEXUS',
+        password: 'Sua senha deve ter pelo menos 8 caracteres',
+        sso: 'Autenticação segura com Single Sign-On'
+    };
+    
+    return contents[key] || 'Informação adicional';
 }
 
 /**
  * Utilitários
  */
+function getProfileDisplayName(profileType) {
+    const names = {
+        empresa: 'Empresa',
+        estudantil: 'Estudantil'
+    };
+    
+    return names[profileType] || 'Desconhecido';
+}
+
+function generateId() {
+    return Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
+}
+
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -678,60 +495,102 @@ function debounce(func, wait) {
     };
 }
 
+/**
+ * Adiciona estilos CSS dinâmicos
+ */
+function injectDynamicStyles() {
+    const styles = `
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes ripple {
+            to {
+                width: 200px;
+                height: 200px;
+                opacity: 0;
+            }
+        }
+        
+        @keyframes confetti {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: 
+                    translate(
+                        calc(-50% + cos(var(--angle)) * var(--velocity) * 100px),
+                        calc(-50% + sin(var(--angle)) * var(--velocity) * 100px)
+                    )
+                    rotate(var(--rotation));
+                opacity: 0;
+            }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+        
+        .form-group.focused label {
+            color: #ec4899;
+        }
+        
+        .form-group.focused input {
+            border-color: #ec4899;
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+        }
+    `;
+    
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = styles;
+    document.head.appendChild(styleSheet);
+}
+
+// Injeta os estilos dinâmicos
+injectDynamicStyles();
+
 // Exporta funções para uso global (se necessário)
 window.NEXUS = {
     appState,
     logout,
-    validateForm,
-    getProfileDisplayName
+    validateForm: validateForm,
+    getProfileDisplayName,
+    showSuccess,
+    showError,
+    showInfo
 };
 
-// Adiciona estilos para animações
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideInRight {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-    
-    .loading-spinner {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border: 2px solid transparent;
-        border-top: 2px solid currentColor;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-right: 8px;
-    }
-    
-    input.error {
-        border-color: #ff6b6b !important;
-        background-color: #fff5f5;
-    }
-    
-    .message-content {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .message-close {
-        background: none;
-        border: none;
-        color: white;
-        font-size: 18px;
-        cursor: pointer;
-        padding: 0;
-        margin-left: 10px;
-    }
-`;
-document.head.appendChild(style);
-
 console.log('✅ NEXUS - Script carregado com sucesso');
+console.log('🎨 Design: Preto, Cinza e Rosa Moderno');
+console.log('🚀 Versão: 1.0.0');
