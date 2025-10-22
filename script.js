@@ -1,418 +1,737 @@
-// Central de Denúncias - Nexus
+// script.js
+
+// Configurações e constantes
+const CONFIG = {
+    API_BASE_URL: 'https://api.nexus.com/v1',
+    SESSION_TIMEOUT: 30 * 60 * 1000, // 30 minutos
+    PASSWORD_MIN_LENGTH: 8,
+    EMAIL_REGEX: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    SUCCESS_REDIRECT_DELAY: 2000
+};
+
+// Estado da aplicação
+let appState = {
+    currentProfile: 'empresa',
+    isAuthenticated: false,
+    userData: null,
+    sessionTimer: null
+};
+
+// Elementos DOM
+const DOM = {
+    profileOptions: document.querySelectorAll('.profile-option'),
+    loginForm: document.getElementById('loginForm'),
+    emailInput: document.getElementById('email'),
+    passwordInput: document.getElementById('password'),
+    loginBtn: document.querySelector('.login-btn'),
+    ssoBtn: document.querySelector('.sso-btn'),
+    signupLink: document.querySelector('.signup-link a'),
+    container: document.querySelector('.container')
+};
+
+// Inicialização da aplicação
 document.addEventListener('DOMContentLoaded', function() {
-    // Elementos DOM
-    const fileInput = document.getElementById('fileInput');
-    const previewContainer = document.getElementById('previewContainer');
-    const reportForm = document.getElementById('reportForm');
-    const confirmation = document.getElementById('confirmation');
-    const backButton = document.getElementById('backButton');
-    const reportType = document.getElementById('reportType');
-    const reportDescription = document.getElementById('reportDescription');
-    const submitBtn = document.querySelector('.submit-btn');
-    
-    // Estado da aplicação
-    let uploadedFiles = [];
-    let isSubmitting = false;
-
-    // Inicialização
-    initApp();
-
-    function initApp() {
-        setupEventListeners();
-        setupFormValidation();
-        loadFromLocalStorage();
-    }
-
-    function setupEventListeners() {
-        // Upload de arquivos
-        fileInput.addEventListener('change', handleFileUpload);
-        
-        // Envio do formulário
-        reportForm.addEventListener('submit', handleFormSubmit);
-        
-        // Botão voltar
-        backButton.addEventListener('click', handleBackButton);
-        
-        // Validação em tempo real
-        reportType.addEventListener('change', validateForm);
-        reportDescription.addEventListener('input', validateForm);
-        
-        // Prevenir fechamento com dados não salvos
-        window.addEventListener('beforeunload', handleBeforeUnload);
-    }
-
-    function setupFormValidation() {
-        // Adicionar validação customizada
-        reportForm.addEventListener('input', function(e) {
-            const target = e.target;
-            if (target.required) {
-                validateField(target);
-            }
-        });
-    }
-
-    function validateField(field) {
-        const isValid = field.checkValidity();
-        
-        if (!isValid) {
-            field.style.borderColor = '#ff4444';
-            field.title = field.validationMessage;
-        } else {
-            field.style.borderColor = '#3d3d3d';
-            field.title = '';
-        }
-        
-        return isValid;
-    }
-
-    function validateForm() {
-        const isTypeValid = reportType.value !== '';
-        const isDescriptionValid = reportDescription.value.trim().length >= 10;
-        
-        // Atualizar estilos de validação
-        reportType.style.borderColor = isTypeValid ? '#3d3d3d' : '#ff4444';
-        reportDescription.style.borderColor = isDescriptionValid ? '#3d3d3d' : '#ff4444';
-        
-        // Habilitar/desabilitar botão
-        submitBtn.disabled = !(isTypeValid && isDescriptionValid);
-        
-        return isTypeValid && isDescriptionValid;
-    }
-
-    function handleFileUpload(event) {
-        const files = Array.from(event.target.files);
-        
-        // Validar arquivos
-        const validFiles = files.filter(file => {
-            const isValidType = file.type.startsWith('image/');
-            const isValidSize = file.size <= 5 * 1024 * 1024; // 5MB
-            
-            if (!isValidType) {
-                showNotification('Apenas imagens são permitidas!', 'error');
-                return false;
-            }
-            
-            if (!isValidSize) {
-                showNotification('Arquivo muito grande! Máximo 5MB.', 'error');
-                return false;
-            }
-            
-            return true;
-        });
-
-        // Adicionar aos arquivos existentes
-        uploadedFiles = [...uploadedFiles, ...validFiles];
-        
-        // Atualizar preview
-        updatePreview();
-        
-        // Atualizar input de arquivo (limpar para permitir novos uploads do mesmo arquivo)
-        fileInput.value = '';
-        
-        // Salvar no localStorage
-        saveToLocalStorage();
-        
-        if (validFiles.length > 0) {
-            showNotification(`${validFiles.length} arquivo(s) adicionado(s) com sucesso!`, 'success');
-        }
-    }
-
-    function updatePreview() {
-        previewContainer.innerHTML = '';
-        
-        if (uploadedFiles.length === 0) {
-            const emptyMessage = document.createElement('div');
-            emptyMessage.className = 'empty-preview';
-            emptyMessage.innerHTML = '<p>Nenhuma imagem adicionada</p>';
-            emptyMessage.style.gridColumn = '1 / -1';
-            emptyMessage.style.textAlign = 'center';
-            emptyMessage.style.color = 'var(--text-gray)';
-            emptyMessage.style.padding = '20px';
-            previewContainer.appendChild(emptyMessage);
-            return;
-        }
-
-        uploadedFiles.forEach((file, index) => {
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                const previewItem = document.createElement('div');
-                previewItem.className = 'preview-item';
-                previewItem.dataset.index = index;
-                
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.alt = `Preview ${file.name}`;
-                img.title = file.name;
-                
-                const removeBtn = document.createElement('button');
-                removeBtn.className = 'remove-btn';
-                removeBtn.innerHTML = '×';
-                removeBtn.type = 'button';
-                removeBtn.title = 'Remover imagem';
-                
-                removeBtn.addEventListener('click', function() {
-                    removeFile(index);
-                });
-                
-                previewItem.appendChild(img);
-                previewItem.appendChild(removeBtn);
-                previewContainer.appendChild(previewItem);
-            };
-            
-            reader.readAsDataURL(file);
-        });
-    }
-
-    function removeFile(index) {
-        uploadedFiles.splice(index, 1);
-        updatePreview();
-        saveToLocalStorage();
-        showNotification('Imagem removida!', 'info');
-    }
-
-    async function handleFormSubmit(event) {
-        event.preventDefault();
-        
-        if (isSubmitting) return;
-        
-        // Validar formulário
-        if (!validateForm()) {
-            showNotification('Por favor, preencha todos os campos obrigatórios corretamente.', 'error');
-            return;
-        }
-        
-        // Preparar dados
-        const formData = {
-            reportType: reportType.value,
-            reportDescription: reportDescription.value,
-            files: uploadedFiles,
-            timestamp: new Date().toISOString(),
-            reportId: generateReportId()
-        };
-        
-        // Simular envio
-        try {
-            isSubmitting = true;
-            submitBtn.disabled = true;
-            submitBtn.classList.add('loading');
-            submitBtn.textContent = 'Enviando...';
-            
-            // Simular delay de rede
-            await simulateNetworkRequest(formData);
-            
-            // Sucesso
-            showConfirmation();
-            clearForm();
-            clearLocalStorage();
-            showNotification('Denúncia enviada com sucesso!', 'success');
-            
-        } catch (error) {
-            // Erro
-            showNotification('Erro ao enviar denúncia. Tente novamente.', 'error');
-            console.error('Erro no envio:', error);
-        } finally {
-            isSubmitting = false;
-            submitBtn.disabled = false;
-            submitBtn.classList.remove('loading');
-            submitBtn.textContent = 'Enviar Denúncia';
-        }
-    }
-
-    function simulateNetworkRequest(formData) {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                // Simular 10% de chance de erro para teste
-                if (Math.random() < 0.1) {
-                    reject(new Error('Erro de conexão'));
-                } else {
-                    // Simular sucesso - em produção, enviaria para o servidor
-                    console.log('Dados enviados:', {
-                        ...formData,
-                        files: `${formData.files.length} arquivo(s)`
-                    });
-                    resolve(formData);
-                }
-            }, 2000);
-        });
-    }
-
-    function showConfirmation() {
-        reportForm.style.display = 'none';
-        confirmation.style.display = 'block';
-        
-        // Animar entrada
-        confirmation.style.animation = 'fadeIn 0.5s ease';
-    }
-
-    function handleBackButton() {
-        confirmation.style.display = 'none';
-        reportForm.style.display = 'block';
-    }
-
-    function clearForm() {
-        reportForm.reset();
-        uploadedFiles = [];
-        updatePreview();
-        validateForm();
-    }
-
-    function generateReportId() {
-        return 'NEX-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-    }
-
-    function showNotification(message, type = 'info') {
-        // Remover notificação existente
-        const existingNotification = document.querySelector('.notification');
-        if (existingNotification) {
-            existingNotification.remove();
-        }
-        
-        // Criar nova notificação
-        const notification = document.createElement('div');
-        notification.className = `notification notification-${type}`;
-        notification.innerHTML = `
-            <span class="notification-message">${message}</span>
-            <button class="notification-close">×</button>
-        `;
-        
-        // Estilos da notificação
-        Object.assign(notification.style, {
-            position: 'fixed',
-            top: '20px',
-            right: '20px',
-            background: type === 'error' ? '#ff4444' : 
-                       type === 'success' ? '#00c851' : 
-                       type === 'warning' ? '#ffbb33' : '#33b5e5',
-            color: 'white',
-            padding: '12px 20px',
-            borderRadius: '6px',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-            zIndex: '1000',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            maxWidth: '400px',
-            animation: 'slideInRight 0.3s ease'
-        });
-        
-        // Botão fechar
-        const closeBtn = notification.querySelector('.notification-close');
-        closeBtn.style.background = 'none',
-        closeBtn.style.border = 'none',
-        closeBtn.style.color = 'white',
-        closeBtn.style.cursor = 'pointer',
-        closeBtn.style.fontSize = '18px',
-        closeBtn.style.padding = '0',
-        closeBtn.style.width = '20px',
-        closeBtn.style.height = '20px'
-        
-        closeBtn.addEventListener('click', () => {
-            notification.remove();
-        });
-        
-        document.body.appendChild(notification);
-        
-        // Auto-remover após 5 segundos
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.style.animation = 'slideOutRight 0.3s ease';
-                setTimeout(() => notification.remove(), 300);
-            }
-        }, 5000);
-        
-        // Adicionar animações CSS
-        if (!document.querySelector('#notification-styles')) {
-            const style = document.createElement('style');
-            style.id = 'notification-styles';
-            style.textContent = `
-                @keyframes slideInRight {
-                    from {
-                        transform: translateX(100%);
-                        opacity: 0;
-                    }
-                    to {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
-                }
-                
-                @keyframes slideOutRight {
-                    from {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
-                    to {
-                        transform: translateX(100%);
-                        opacity: 0;
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-        }
-    }
-
-    function saveToLocalStorage() {
-        const formData = {
-            reportType: reportType.value,
-            reportDescription: reportDescription.value
-        };
-        
-        localStorage.setItem('nexusReportDraft', JSON.stringify(formData));
-    }
-
-    function loadFromLocalStorage() {
-        const saved = localStorage.getItem('nexusReportDraft');
-        
-        if (saved) {
-            try {
-                const formData = JSON.parse(saved);
-                reportType.value = formData.reportType || '';
-                reportDescription.value = formData.reportDescription || '';
-                
-                if (formData.reportType || formData.reportDescription) {
-                    showNotification('Rascunho recuperado automaticamente.', 'info');
-                }
-                
-                validateForm();
-            } catch (error) {
-                console.error('Erro ao carregar rascunho:', error);
-            }
-        }
-    }
-
-    function clearLocalStorage() {
-        localStorage.removeItem('nexusReportDraft');
-    }
-
-    function handleBeforeUnload(event) {
-        const hasData = reportType.value || reportDescription.value || uploadedFiles.length > 0;
-        
-        if (hasData && !isSubmitting) {
-            event.preventDefault();
-            event.returnValue = 'Você tem dados não salvos. Tem certeza que deseja sair?';
-            return event.returnValue;
-        }
-    }
-
-    // Validação inicial
-    validateForm();
-
-    // Expor funções globais para debug (apenas em desenvolvimento)
-    if (process.env.NODE_ENV === 'development') {
-        window.nexusReport = {
-            clearForm: () => {
-                clearForm();
-                showNotification('Formulário limpo!', 'info');
-            },
-            getFormData: () => ({
-                reportType: reportType.value,
-                reportDescription: reportDescription.value,
-                files: uploadedFiles
-            }),
-            simulateError: () => {
-                showNotification('Este é um erro simulado!', 'error');
-            }
-        };
-    }
+    initializeApp();
+    setupEventListeners();
+    checkExistingSession();
 });
+
+/**
+ * Inicializa a aplicação
+ */
+function initializeApp() {
+    console.log('🚀 NEXUS - Inicializando aplicação');
+    
+    // Verifica se todos os elementos necessários estão presentes
+    if (!DOM.loginForm || !DOM.emailInput || !DOM.passwordInput) {
+        console.error('❌ Elementos do formulário não encontrados');
+        showError('Erro na inicialização da aplicação. Recarregue a página.');
+        return;
+    }
+    
+    // Configura placeholder dinâmico baseado no perfil
+    updatePlaceholders();
+    
+    // Aplica máscara de email se houver um valor padrão
+    if (DOM.emailInput.value) {
+        formatEmailInput(DOM.emailInput);
+    }
+}
+
+/**
+ * Configura os event listeners
+ */
+function setupEventListeners() {
+    // Seleção de perfil
+    DOM.profileOptions.forEach(option => {
+        option.addEventListener('click', handleProfileSelection);
+    });
+    
+    // Formulário de login
+    DOM.loginForm.addEventListener('submit', handleLoginSubmit);
+    
+    // Validação em tempo real
+    DOM.emailInput.addEventListener('input', handleEmailInput);
+    DOM.emailInput.addEventListener('blur', validateEmail);
+    DOM.passwordInput.addEventListener('input', handlePasswordInput);
+    DOM.passwordInput.addEventListener('blur', validatePassword);
+    
+    // Botão SSO
+    DOM.ssoBtn.addEventListener('click', handleSSOLogin);
+    
+    // Link de cadastro
+    DOM.signupLink.addEventListener('click', handleSignupRedirect);
+    
+    // Teclas de atalho
+    document.addEventListener('keydown', handleKeyboardShortcuts);
+    
+    // Prevenção de copiar/colar na senha (opcional)
+    DOM.passwordInput.addEventListener('paste', preventPasswordPaste);
+}
+
+/**
+ * Manipula a seleção de perfil
+ */
+function handleProfileSelection(event) {
+    const selectedOption = event.currentTarget;
+    const profileType = selectedOption.id;
+    
+    // Remove a classe active de todos
+    DOM.profileOptions.forEach(opt => {
+        opt.classList.remove('active');
+        opt.setAttribute('aria-selected', 'false');
+    });
+    
+    // Adiciona a classe active apenas ao clicado
+    selectedOption.classList.add('active');
+    selectedOption.setAttribute('aria-selected', 'true');
+    
+    // Atualiza o estado
+    appState.currentProfile = profileType;
+    
+    // Atualiza placeholders e textos
+    updatePlaceholders();
+    
+    // Feedback visual
+    showFeedback(`Perfil ${getProfileDisplayName(profileType)} selecionado`);
+    
+    console.log(`👤 Perfil alterado para: ${profileType}`);
+}
+
+/**
+ * Manipula o envio do formulário de login
+ */
+async function handleLoginSubmit(event) {
+    event.preventDefault();
+    
+    // Validação dos campos
+    if (!validateForm()) {
+        return;
+    }
+    
+    // Prepara dados do formulário
+    const formData = {
+        email: DOM.emailInput.value.trim(),
+        password: DOM.passwordInput.value,
+        profileType: appState.currentProfile,
+        timestamp: new Date().toISOString()
+    };
+    
+    // Mostra estado de carregamento
+    setLoadingState(true);
+    
+    try {
+        // Simula uma requisição de API
+        const response = await simulateLoginAPI(formData);
+        
+        if (response.success) {
+            await handleSuccessfulLogin(response.data);
+        } else {
+            handleLoginError(response.error);
+        }
+    } catch (error) {
+        handleLoginError('Erro de conexão. Tente novamente.');
+        console.error('❌ Erro no login:', error);
+    } finally {
+        setLoadingState(false);
+    }
+}
+
+/**
+ * Simula uma chamada de API de login
+ */
+async function simulateLoginAPI(formData) {
+    // Simula delay de rede
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Validações simuladas
+    if (!CONFIG.EMAIL_REGEX.test(formData.email)) {
+        return {
+            success: false,
+            error: 'Formato de email inválido'
+        };
+    }
+    
+    if (formData.password.length < CONFIG.PASSWORD_MIN_LENGTH) {
+        return {
+            success: false,
+            error: `A senha deve ter pelo menos ${CONFIG.PASSWORD_MIN_LENGTH} caracteres`
+        };
+    }
+    
+    // Simula credenciais válidas
+    const validCredentials = {
+        'empresa': ['empresa@nexus.com', 'empresa123'],
+        'estudantil': ['estudante@nexus.com', 'estudante123']
+    };
+    
+    const [validEmail, validPassword] = validCredentials[formData.profileType] || [];
+    
+    if (formData.email === validEmail && formData.password === validPassword) {
+        return {
+            success: true,
+            data: {
+                user: {
+                    id: Math.random().toString(36).substr(2, 9),
+                    email: formData.email,
+                    name: formData.profileType === 'empresa' ? 'Empresa Nexus' : 'Estudante Nexus',
+                    profile: formData.profileType,
+                    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.profileType === 'empresa' ? 'Empresa' : 'Estudante')}&background=1a2a6c&color=fff`
+                },
+                token: 'nexus_token_' + Math.random().toString(36).substr(2),
+                expiresIn: CONFIG.SESSION_TIMEOUT
+            }
+        };
+    }
+    
+    return {
+        success: false,
+        error: 'Email ou senha incorretos'
+    };
+}
+
+/**
+ * Manipula login bem-sucedido
+ */
+async function handleSuccessfulLogin(userData) {
+    // Atualiza estado da aplicação
+    appState.isAuthenticated = true;
+    appState.userData = userData;
+    
+    // Salva sessão
+    saveSession(userData);
+    
+    // Inicia timer de sessão
+    startSessionTimer();
+    
+    // Mostra mensagem de sucesso
+    showSuccess(`Bem-vindo(a) de volta, ${userData.user.name}!`);
+    
+    // Log para debug
+    console.log('✅ Login realizado com sucesso:', userData);
+    
+    // Redireciona após delay
+    setTimeout(() => {
+        redirectToDashboard();
+    }, CONFIG.SUCCESS_REDIRECT_DELAY);
+}
+
+/**
+ * Manipula erro no login
+ */
+function handleLoginError(errorMessage) {
+    showError(errorMessage);
+    
+    // Adiciona classe de erro aos inputs
+    DOM.emailInput.classList.add('error');
+    DOM.passwordInput.classList.add('error');
+    
+    // Remove classes de erro após 3 segundos
+    setTimeout(() => {
+        DOM.emailInput.classList.remove('error');
+        DOM.passwordInput.classList.remove('error');
+    }, 3000);
+    
+    // Foca no campo de email para correção
+    DOM.emailInput.focus();
+}
+
+/**
+ * Manipula login SSO
+ */
+function handleSSOLogin() {
+    showFeedback('Redirecionando para autenticação SSO...');
+    
+    // Simula redirecionamento SSO
+    setTimeout(() => {
+        // Em um ambiente real, isso redirecionaria para o provedor SSO
+        showInfo('Funcionalidade SSO em desenvolvimento');
+        console.log('🔐 Redirecionando para SSO...');
+    }, 1000);
+}
+
+/**
+ * Manipula redirecionamento para cadastro
+ */
+function handleSignupRedirect(event) {
+    event.preventDefault();
+    
+    showFeedback('Redirecionando para criação de conta...');
+    
+    // Simula redirecionamento para página de cadastro
+    setTimeout(() => {
+        // Em um ambiente real, isso redirecionaria para a página de cadastro
+        window.location.href = '/signup?profile=' + appState.currentProfile;
+    }, 500);
+}
+
+/**
+ * Validação do formulário
+ */
+function validateForm() {
+    const emailValid = validateEmail();
+    const passwordValid = validatePassword();
+    
+    return emailValid && passwordValid;
+}
+
+/**
+ * Validação de email
+ */
+function validateEmail() {
+    const email = DOM.emailInput.value.trim();
+    
+    if (!email) {
+        showFieldError(DOM.emailInput, 'Email é obrigatório');
+        return false;
+    }
+    
+    if (!CONFIG.EMAIL_REGEX.test(email)) {
+        showFieldError(DOM.emailInput, 'Formato de email inválido');
+        return false;
+    }
+    
+    clearFieldError(DOM.emailInput);
+    return true;
+}
+
+/**
+ * Validação de senha
+ */
+function validatePassword() {
+    const password = DOM.passwordInput.value;
+    
+    if (!password) {
+        showFieldError(DOM.passwordInput, 'Senha é obrigatória');
+        return false;
+    }
+    
+    if (password.length < CONFIG.PASSWORD_MIN_LENGTH) {
+        showFieldError(DOM.passwordInput, `A senha deve ter pelo menos ${CONFIG.PASSWORD_MIN_LENGTH} caracteres`);
+        return false;
+    }
+    
+    clearFieldError(DOM.passwordInput);
+    return true;
+}
+
+/**
+ * Manipula input de email
+ */
+function handleEmailInput(event) {
+    formatEmailInput(event.target);
+    clearFieldError(DOM.emailInput);
+}
+
+/**
+ * Manipula input de senha
+ */
+function handlePasswordInput(event) {
+    updatePasswordStrength(event.target.value);
+    clearFieldError(DOM.passwordInput);
+}
+
+/**
+ * Formata input de email
+ */
+function formatEmailInput(input) {
+    // Remove espaços e converte para minúsculas
+    input.value = input.value.trim().toLowerCase();
+}
+
+/**
+ * Atualiza força da senha (visual)
+ */
+function updatePasswordStrength(password) {
+    // Implementação básica de força de senha
+    let strength = 0;
+    
+    if (password.length >= 8) strength++;
+    if (/[A-Z]/.test(password)) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[^A-Za-z0-9]/.test(password)) strength++;
+    
+    // Atualiza visualmente (poderia ser implementado com uma barra de progresso)
+    DOM.passwordInput.style.borderColor = 
+        strength === 0 ? '#e0e0e0' :
+        strength <= 2 ? '#ff6b6b' :
+        strength <= 3 ? '#fdbb2d' : '#51cf66';
+}
+
+/**
+ * Atualiza placeholders baseados no perfil
+ */
+function updatePlaceholders() {
+    const profile = appState.currentProfile;
+    
+    const placeholders = {
+        empresa: {
+            email: 'contato@empresa.com',
+            hint: 'Entre para gerenciar suas vagas e talentos'
+        },
+        estudantil: {
+            email: 'aluno@universidade.edu',
+            hint: 'Entre para encontrar oportunidades incríveis'
+        }
+    };
+    
+    const current = placeholders[profile] || placeholders.empresa;
+    
+    DOM.emailInput.placeholder = current.email;
+    
+    // Atualiza hint se existir no DOM
+    const hintElement = document.querySelector('.login-section p');
+    if (hintElement) {
+        hintElement.textContent = current.hint;
+    }
+}
+
+/**
+ * Retorna nome display do perfil
+ */
+function getProfileDisplayName(profileType) {
+    const names = {
+        empresa: 'Empresa',
+        estudantil: 'Estudantil'
+    };
+    
+    return names[profileType] || 'Desconhecido';
+}
+
+/**
+ * Manipula atalhos de teclado
+ */
+function handleKeyboardShortcuts(event) {
+    // Ctrl + Enter para submeter formulário
+    if (event.ctrlKey && event.key === 'Enter') {
+        event.preventDefault();
+        DOM.loginForm.dispatchEvent(new Event('submit'));
+    }
+    
+    // Alt + 1 para perfil empresa
+    if (event.altKey && event.key === '1') {
+        event.preventDefault();
+        document.getElementById('empresa').click();
+    }
+    
+    // Alt + 2 para perfil estudantil
+    if (event.altKey && event.key === '2') {
+        event.preventDefault();
+        document.getElementById('estudantil').click();
+    }
+}
+
+/**
+ * Previne colar na senha (opcional)
+ */
+function preventPasswordPaste(event) {
+    // event.preventDefault(); // Descomente se quiser prevenir colar
+    showFeedback('Colar na senha não é permitido por segurança');
+}
+
+/**
+ * Define estado de carregamento
+ */
+function setLoadingState(loading) {
+    if (loading) {
+        DOM.loginBtn.classList.add('loading');
+        DOM.loginBtn.disabled = true;
+        DOM.loginBtn.innerHTML = '<span class="loading-spinner"></span> Entrando...';
+    } else {
+        DOM.loginBtn.classList.remove('loading');
+        DOM.loginBtn.disabled = false;
+        DOM.loginBtn.textContent = 'Entrar';
+    }
+    
+    // Desabilita outros controles durante o loading
+    DOM.profileOptions.forEach(opt => {
+        opt.style.pointerEvents = loading ? 'none' : 'auto';
+    });
+    
+    DOM.ssoBtn.disabled = loading;
+    DOM.signupLink.style.pointerEvents = loading ? 'none' : 'auto';
+}
+
+/**
+ * Sistema de mensagens
+ */
+function showMessage(message, type = 'info') {
+    // Remove mensagens existentes
+    const existingMessage = document.querySelector('.message-overlay');
+    if (existingMessage) {
+        existingMessage.remove();
+    }
+    
+    // Cria nova mensagem
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message-overlay message-${type}`;
+    messageDiv.innerHTML = `
+        <div class="message-content">
+            <span class="message-icon">${getMessageIcon(type)}</span>
+            <span class="message-text">${message}</span>
+            <button class="message-close" onclick="this.parentElement.parentElement.remove()">×</button>
+        </div>
+    `;
+    
+    // Adiciona estilos
+    messageDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${getMessageColor(type)};
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        z-index: 10000;
+        animation: slideInRight 0.3s ease;
+        max-width: 400px;
+    `;
+    
+    document.body.appendChild(messageDiv);
+    
+    // Remove automaticamente após 5 segundos
+    setTimeout(() => {
+        if (messageDiv.parentElement) {
+            messageDiv.remove();
+        }
+    }, 5000);
+}
+
+function showSuccess(message) {
+    showMessage(message, 'success');
+}
+
+function showError(message) {
+    showMessage(message, 'error');
+}
+
+function showInfo(message) {
+    showMessage(message, 'info');
+}
+
+function showFeedback(message) {
+    showMessage(message, 'feedback');
+}
+
+function getMessageIcon(type) {
+    const icons = {
+        success: '✅',
+        error: '❌',
+        info: 'ℹ️',
+        feedback: '💡'
+    };
+    return icons[type] || '💡';
+}
+
+function getMessageColor(type) {
+    const colors = {
+        success: '#51cf66',
+        error: '#ff6b6b',
+        info: '#339af0',
+        feedback: '#fdbb2d'
+    };
+    return colors[type] || '#339af0';
+}
+
+/**
+ * Mostra erro em campo específico
+ */
+function showFieldError(input, message) {
+    clearFieldError(input);
+    
+    input.classList.add('error');
+    
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'field-error';
+    errorDiv.textContent = message;
+    errorDiv.style.cssText = `
+        color: #ff6b6b;
+        font-size: 0.8rem;
+        margin-top: 5px;
+    `;
+    
+    input.parentNode.appendChild(errorDiv);
+}
+
+/**
+ * Limpa erro do campo
+ */
+function clearFieldError(input) {
+    input.classList.remove('error');
+    
+    const existingError = input.parentNode.querySelector('.field-error');
+    if (existingError) {
+        existingError.remove();
+    }
+}
+
+/**
+ * Gerenciamento de sessão
+ */
+function saveSession(userData) {
+    const sessionData = {
+        user: userData.user,
+        token: userData.token,
+        expires: Date.now() + userData.expiresIn
+    };
+    
+    localStorage.setItem('nexus_session', JSON.stringify(sessionData));
+}
+
+function checkExistingSession() {
+    const sessionData = localStorage.getItem('nexus_session');
+    
+    if (sessionData) {
+        const session = JSON.parse(sessionData);
+        
+        if (session.expires > Date.now()) {
+            // Sessão válida
+            appState.isAuthenticated = true;
+            appState.userData = { user: session.user, token: session.token };
+            startSessionTimer();
+            console.log('🔑 Sessão recuperada:', session.user.name);
+        } else {
+            // Sessão expirada
+            localStorage.removeItem('nexus_session');
+            console.log('⏰ Sessão expirada');
+        }
+    }
+}
+
+function startSessionTimer() {
+    if (appState.sessionTimer) {
+        clearTimeout(appState.sessionTimer);
+    }
+    
+    appState.sessionTimer = setTimeout(() => {
+        showInfo('Sua sessão expirou. Faça login novamente.');
+        logout();
+    }, CONFIG.SESSION_TIMEOUT);
+}
+
+function logout() {
+    appState.isAuthenticated = false;
+    appState.userData = null;
+    
+    localStorage.removeItem('nexus_session');
+    
+    if (appState.sessionTimer) {
+        clearTimeout(appState.sessionTimer);
+    }
+    
+    console.log('👋 Usuário deslogado');
+}
+
+/**
+ * Redirecionamento
+ */
+function redirectToDashboard() {
+    const profile = appState.currentProfile;
+    const dashboardUrls = {
+        empresa: '/empresa/dashboard',
+        estudantil: '/estudante/dashboard'
+    };
+    
+    const url = dashboardUrls[profile] || '/dashboard';
+    
+    // Em um ambiente real:
+    // window.location.href = url;
+    
+    // Simulação
+    showSuccess(`Redirecionando para o dashboard ${getProfileDisplayName(profile)}...`);
+    console.log(`🔄 Redirecionando para: ${url}`);
+}
+
+/**
+ * Utilitários
+ */
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Exporta funções para uso global (se necessário)
+window.NEXUS = {
+    appState,
+    logout,
+    validateForm,
+    getProfileDisplayName
+};
+
+// Adiciona estilos para animações
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    .loading-spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid transparent;
+        border-top: 2px solid currentColor;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-right: 8px;
+    }
+    
+    input.error {
+        border-color: #ff6b6b !important;
+        background-color: #fff5f5;
+    }
+    
+    .message-content {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .message-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 0;
+        margin-left: 10px;
+    }
+`;
+document.head.appendChild(style);
+
+console.log('✅ NEXUS - Script carregado com sucesso');

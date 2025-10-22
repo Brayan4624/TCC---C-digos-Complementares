@@ -3,20 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Central de Denúncias - Nexus</title>
+    <title>NEXUS - Conectando talentos e oportunidades</title>
     <style>
-        :root {
-            --primary-black: #121212;
-            --secondary-black: #1e1e1e;
-            --primary-gray: #2d2d2d;
-            --secondary-gray: #3d3d3d;
-            --light-gray: #e0e0e0;
-            --accent-pink: #e91e63;
-            --light-pink: #f8bbd9;
-            --text-white: #ffffff;
-            --text-gray: #b0b0b0;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -25,377 +13,310 @@
         }
 
         body {
-            background-color: var(--primary-black);
-            color: var(--text-white);
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 20px;
         }
 
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px 0;
-            border-bottom: 1px solid var(--primary-gray);
+        .container {
+            display: flex;
+            max-width: 1000px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
         }
 
-        .logo {
+        .brand-section {
+            flex: 1;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f);
+            color: white;
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .brand-section h1 {
             font-size: 2.5rem;
+            margin-bottom: 15px;
             font-weight: 700;
-            color: var(--text-white);
-            margin-bottom: 10px;
         }
 
-        .logo span {
-            color: var(--accent-pink);
+        .brand-section h2 {
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-bottom: 30px;
+            opacity: 0.9;
         }
 
-        h1 {
-            font-size: 1.8rem;
-            color: var(--text-white);
-            margin-bottom: 10px;
-        }
-
-        .description {
-            color: var(--text-gray);
+        .brand-section p {
             font-size: 1rem;
-            max-width: 600px;
-            margin: 0 auto;
+            margin-top: 30px;
+            opacity: 0.8;
+            font-style: italic;
         }
 
-        .report-form {
-            background-color: var(--secondary-black);
+        .login-section {
+            flex: 1;
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-section h3 {
+            font-size: 1.8rem;
+            color: #1a2a6c;
+            margin-bottom: 10px;
+        }
+
+        .login-section p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .profile-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .profile-option {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
             border-radius: 10px;
-            padding: 30px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .profile-option:hover {
+            border-color: #1a2a6c;
+        }
+
+        .profile-option.active {
+            border-color: #1a2a6c;
+            background-color: rgba(26, 42, 108, 0.05);
+        }
+
+        .profile-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #1a2a6c;
         }
 
         .form-group {
-            margin-bottom: 25px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--text-white);
-        }
-
-        select, textarea {
-            width: 100%;
-            padding: 12px 15px;
-            background-color: var(--primary-gray);
-            border: 1px solid var(--secondary-gray);
-            border-radius: 6px;
-            color: var(--text-white);
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--accent-pink);
-            box-shadow: 0 0 0 2px rgba(233, 30, 99, 0.2);
-        }
-
-        textarea {
-            min-height: 150px;
-            resize: vertical;
-        }
-
-        .file-upload {
-            position: relative;
-            margin-top: 10px;
-        }
-
-        .file-input {
-            position: absolute;
-            left: -9999px;
-        }
-
-        .file-label {
-            display: inline-block;
-            padding: 12px 20px;
-            background-color: var(--primary-gray);
-            border: 1px dashed var(--secondary-gray);
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            text-align: center;
-            color: var(--text-gray);
-        }
-
-        .file-label:hover {
-            background-color: var(--secondary-gray);
-            border-color: var(--accent-pink);
-            color: var(--light-pink);
-        }
-
-        .file-label i {
-            margin-right: 8px;
-        }
-
-        .preview-container {
-            margin-top: 15px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 10px;
-        }
-
-        .preview-item {
-            position: relative;
-            border-radius: 6px;
-            overflow: hidden;
-            height: 120px;
-        }
-
-        .preview-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .remove-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .submit-btn {
-            background-color: var(--accent-pink);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 14px 25px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        .submit-btn:hover {
-            background-color: #d81b60;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(233, 30, 99, 0.3);
-        }
-
-        .submit-btn:active {
-            transform: translateY(0);
-        }
-
-        .confirmation {
-            display: none;
-            text-align: center;
-            padding: 40px 20px;
-            background-color: var(--secondary-black);
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-
-        .confirmation i {
-            font-size: 3rem;
-            color: var(--accent-pink);
             margin-bottom: 20px;
         }
 
-        .confirmation h2 {
-            margin-bottom: 15px;
-            color: var(--text-white);
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
         }
 
-        .confirmation p {
-            color: var(--text-gray);
-            margin-bottom: 25px;
-        }
-
-        .back-btn {
-            background-color: transparent;
-            color: var(--accent-pink);
-            border: 1px solid var(--accent-pink);
-            border-radius: 6px;
-            padding: 10px 20px;
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
             font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #1a2a6c;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(26, 42, 108, 0.2);
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
         }
 
-        .back-btn:hover {
-            background-color: rgba(233, 30, 99, 0.1);
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            padding: 20px 0;
-            color: var(--text-gray);
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .divider span {
+            padding: 0 15px;
+            color: #666;
             font-size: 0.9rem;
-            border-top: 1px solid var(--primary-gray);
         }
 
-        @media (max-width: 600px) {
+        .sso-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .sso-btn:hover {
+            background-color: #f5f5f5;
+        }
+
+        .sso-icon {
+            font-size: 1.2rem;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+        }
+
+        .signup-link a {
+            color: #1a2a6c;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
             .container {
-                padding: 15px;
+                flex-direction: column;
             }
             
-            .report-form {
-                padding: 20px;
-            }
-            
-            .logo {
-                font-size: 2rem;
-            }
-            
-            h1 {
-                font-size: 1.5rem;
+            .brand-section, .login-section {
+                padding: 30px 25px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <div class="logo">Nex<span>us</span></div>
-            <h1>Central de Denúncias</h1>
-            <p class="description">
-                Sua segurança é nossa prioridade. Utilize este formulário para reportar qualquer conteúdo ou comportamento inadequado que você encontrar em nossa plataforma.
-            </p>
-        </header>
-
-        <main>
-            <form id="reportForm" class="report-form">
-                <div class="form-group">
-                    <label for="reportType">Tipo de Denúncia</label>
-                    <select id="reportType" required>
-                        <option value="" disabled selected>Selecione o tipo de denúncia</option>
-                        <option value="harassment">Assédio ou Bullying</option>
-                        <option value="fake_profile">Perfil Falso</option>
-                        <option value="inappropriate_content">Conteúdo Inapropriado</option>
-                        <option value="spam">Spam</option>
-                        <option value="hate_speech">Discurso de Ódio</option>
-                        <option value="privacy_violation">Violação de Privacidade</option>
-                        <option value="other">Outro</option>
-                    </select>
+        <div class="brand-section">
+            <h1>NEXUS</h1>
+            <h2>Conectando talentos e oportunidades</h2>
+            <p>Investigação de talentos gerais</p>
+        </div>
+        <div class="login-section">
+            <h3>Entrar na sua conta</h3>
+            <p>Entre para aceitar suas oportunidades</p>
+            
+            <div class="profile-selector">
+                <div class="profile-option active" id="empresa">
+                    <div class="profile-icon">🏢</div>
+                    <div>Perfil Empresa</div>
                 </div>
-
-                <div class="form-group">
-                    <label for="reportDescription">Descrição da Denúncia</label>
-                    <textarea id="reportDescription" placeholder="Descreva detalhadamente o ocorrido, incluindo links, nomes de usuários e qualquer informação relevante..." required></textarea>
+                <div class="profile-option" id="estudantil">
+                    <div class="profile-icon">🎓</div>
+                    <div>Perfil Estudantil</div>
                 </div>
-
-                <div class="form-group">
-                    <label>Provas (Opcional)</label>
-                    <p style="color: var(--text-gray); font-size: 0.9rem; margin-bottom: 10px;">
-                        Você pode adicionar prints ou outras imagens que comprovem sua denúncia.
-                    </p>
-                    
-                    <div class="file-upload">
-                        <input type="file" id="fileInput" class="file-input" accept="image/*" multiple>
-                        <label for="fileInput" class="file-label">
-                            <i>📁</i> Clique para adicionar imagens
-                        </label>
-                    </div>
-                    
-                    <div class="preview-container" id="previewContainer"></div>
-                </div>
-
-                <button type="submit" class="submit-btn">Enviar Denúncia</button>
-            </form>
-
-            <div id="confirmation" class="confirmation">
-                <i>✓</i>
-                <h2>Denúncia Enviada com Sucesso!</h2>
-                <p>Obrigado por nos ajudar a manter a Nexus um ambiente seguro. Nossa equipe analisará sua denúncia e tomará as medidas necessárias.</p>
-                <button class="back-btn" id="backButton">Fazer Nova Denúncia</button>
             </div>
-        </main>
-
-        <footer>
-            <p>Nexus &copy; 2023 - Todos os direitos reservados</p>
-        </footer>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="luxvus@nexups.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+                
+                <button type="submit" class="login-btn">Entrar</button>
+            </form>
+            
+            <div class="divider">
+                <span>ou</span>
+            </div>
+            
+            <button class="sso-btn">
+                <span class="sso-icon">🔒</span>
+                <span>Entrar com Samba</span>
+            </button>
+            
+            <div class="signup-link">
+                Ainda não tem uma conta? <a href="#">Criar conta gratuita</a>
+            </div>
+        </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const fileInput = document.getElementById('fileInput');
-            const previewContainer = document.getElementById('previewContainer');
-            const reportForm = document.getElementById('reportForm');
-            const confirmation = document.getElementById('confirmation');
-            const backButton = document.getElementById('backButton');
-            
-            // Preview de imagens selecionadas
-            fileInput.addEventListener('change', function() {
-                previewContainer.innerHTML = '';
-                
-                if (this.files) {
-                    Array.from(this.files).forEach(file => {
-                        const reader = new FileReader();
-                        
-                        reader.onload = function(e) {
-                            const previewItem = document.createElement('div');
-                            previewItem.className = 'preview-item';
-                            
-                            const img = document.createElement('img');
-                            img.src = e.target.result;
-                            img.alt = 'Preview da imagem';
-                            
-                            const removeBtn = document.createElement('button');
-                            removeBtn.className = 'remove-btn';
-                            removeBtn.innerHTML = '×';
-                            removeBtn.type = 'button';
-                            
-                            removeBtn.addEventListener('click', function() {
-                                previewItem.remove();
-                                // Aqui seria necessário remover o arquivo do fileInput também
-                                // Mas isso é mais complexo e exigiria recriar o FileList
-                            });
-                            
-                            previewItem.appendChild(img);
-                            previewItem.appendChild(removeBtn);
-                            previewContainer.appendChild(previewItem);
-                        }
-                        
-                        reader.readAsDataURL(file);
-                    });
-                }
+        // Seleção de perfil
+        const profileOptions = document.querySelectorAll('.profile-option');
+        
+        profileOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                // Remove a classe active de todos
+                profileOptions.forEach(opt => opt.classList.remove('active'));
+                // Adiciona a classe active apenas ao clicado
+                option.classList.add('active');
             });
+        });
+        
+        // Validação do formulário
+        const loginForm = document.getElementById('loginForm');
+        
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
             
-            // Envio do formulário
-            reportForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                // Aqui normalmente enviaríamos os dados para um servidor
-                // Por enquanto, apenas simulamos o envio
-                
-                // Esconde o formulário e mostra a confirmação
-                reportForm.style.display = 'none';
-                confirmation.style.display = 'block';
-            });
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const activeProfile = document.querySelector('.profile-option.active').id;
             
-            // Botão para voltar ao formulário
-            backButton.addEventListener('click', function() {
-                confirmation.style.display = 'none';
-                reportForm.style.display = 'block';
-                reportForm.reset();
-                previewContainer.innerHTML = '';
-            });
+            // Validação básica
+            if (!email || !password) {
+                alert('Por favor, preencha todos os campos.');
+                return;
+            }
+            
+            // Simulação de login
+            alert(`Login realizado com sucesso!\nPerfil: ${activeProfile}\nEmail: ${email}`);
+            
+            // Aqui você pode adicionar a lógica de autenticação real
+        });
+        
+        // Botão SSO
+        const ssoBtn = document.querySelector('.sso-btn');
+        
+        ssoBtn.addEventListener('click', () => {
+            alert('Redirecionando para autenticação SSO...');
+            // Aqui você pode adicionar a lógica de autenticação SSO
         });
     </script>
 </body>
