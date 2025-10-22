@@ -3,151 +3,400 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS - Conectando talentos e oportunidades</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Central de Denúncias - Nexus</title>
+    <style>
+        :root {
+            --primary-black: #121212;
+            --secondary-black: #1e1e1e;
+            --primary-gray: #2d2d2d;
+            --secondary-gray: #3d3d3d;
+            --light-gray: #e0e0e0;
+            --accent-pink: #e91e63;
+            --light-pink: #f8bbd9;
+            --text-white: #ffffff;
+            --text-gray: #b0b0b0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--primary-black);
+            color: var(--text-white);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--primary-gray);
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-white);
+            margin-bottom: 10px;
+        }
+
+        .logo span {
+            color: var(--accent-pink);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--text-white);
+            margin-bottom: 10px;
+        }
+
+        .description {
+            color: var(--text-gray);
+            font-size: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .report-form {
+            background-color: var(--secondary-black);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-white);
+        }
+
+        select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: var(--primary-gray);
+            border: 1px solid var(--secondary-gray);
+            border-radius: 6px;
+            color: var(--text-white);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-pink);
+            box-shadow: 0 0 0 2px rgba(233, 30, 99, 0.2);
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .file-upload {
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .file-input {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-label {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: var(--primary-gray);
+            border: 1px dashed var(--secondary-gray);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-align: center;
+            color: var(--text-gray);
+        }
+
+        .file-label:hover {
+            background-color: var(--secondary-gray);
+            border-color: var(--accent-pink);
+            color: var(--light-pink);
+        }
+
+        .file-label i {
+            margin-right: 8px;
+        }
+
+        .preview-container {
+            margin-top: 15px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .preview-item {
+            position: relative;
+            border-radius: 6px;
+            overflow: hidden;
+            height: 120px;
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .submit-btn {
+            background-color: var(--accent-pink);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 14px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background-color: #d81b60;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(233, 30, 99, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .confirmation {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            background-color: var(--secondary-black);
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .confirmation i {
+            font-size: 3rem;
+            color: var(--accent-pink);
+            margin-bottom: 20px;
+        }
+
+        .confirmation h2 {
+            margin-bottom: 15px;
+            color: var(--text-white);
+        }
+
+        .confirmation p {
+            color: var(--text-gray);
+            margin-bottom: 25px;
+        }
+
+        .back-btn {
+            background-color: transparent;
+            color: var(--accent-pink);
+            border: 1px solid var(--accent-pink);
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: rgba(233, 30, 99, 0.1);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px 0;
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--primary-gray);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .report-form {
+                padding: 20px;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="app-container">
-        <div class="background-gradient"></div>
-        
-        <div class="content-wrapper">
-            <!-- Logo and Title -->
-            <div class="logo-section">
-                <div class="logo-icon">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-                        <polyline points="17 6 23 6 23 12"></polyline>
-                    </svg>
+    <div class="container">
+        <header>
+            <div class="logo">Nex<span>us</span></div>
+            <h1>Central de Denúncias</h1>
+            <p class="description">
+                Sua segurança é nossa prioridade. Utilize este formulário para reportar qualquer conteúdo ou comportamento inadequado que você encontrar em nossa plataforma.
+            </p>
+        </header>
+
+        <main>
+            <form id="reportForm" class="report-form">
+                <div class="form-group">
+                    <label for="reportType">Tipo de Denúncia</label>
+                    <select id="reportType" required>
+                        <option value="" disabled selected>Selecione o tipo de denúncia</option>
+                        <option value="harassment">Assédio ou Bullying</option>
+                        <option value="fake_profile">Perfil Falso</option>
+                        <option value="inappropriate_content">Conteúdo Inapropriado</option>
+                        <option value="spam">Spam</option>
+                        <option value="hate_speech">Discurso de Ódio</option>
+                        <option value="privacy_violation">Violação de Privacidade</option>
+                        <option value="other">Outro</option>
+                    </select>
                 </div>
-                <h1 class="app-title">NEXUS</h1>
-                <p class="app-subtitle">Conectando talentos e oportunidades</p>
+
+                <div class="form-group">
+                    <label for="reportDescription">Descrição da Denúncia</label>
+                    <textarea id="reportDescription" placeholder="Descreva detalhadamente o ocorrido, incluindo links, nomes de usuários e qualquer informação relevante..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Provas (Opcional)</label>
+                    <p style="color: var(--text-gray); font-size: 0.9rem; margin-bottom: 10px;">
+                        Você pode adicionar prints ou outras imagens que comprovem sua denúncia.
+                    </p>
+                    
+                    <div class="file-upload">
+                        <input type="file" id="fileInput" class="file-input" accept="image/*" multiple>
+                        <label for="fileInput" class="file-label">
+                            <i>📁</i> Clique para adicionar imagens
+                        </label>
+                    </div>
+                    
+                    <div class="preview-container" id="previewContainer"></div>
+                </div>
+
+                <button type="submit" class="submit-btn">Enviar Denúncia</button>
+            </form>
+
+            <div id="confirmation" class="confirmation">
+                <i>✓</i>
+                <h2>Denúncia Enviada com Sucesso!</h2>
+                <p>Obrigado por nos ajudar a manter a Nexus um ambiente seguro. Nossa equipe analisará sua denúncia e tomará as medidas necessárias.</p>
+                <button class="back-btn" id="backButton">Fazer Nova Denúncia</button>
             </div>
+        </main>
 
-            <!-- Main Card -->
-            <div class="main-card">
-                <div class="card-header">
-                    <h2 class="card-title" id="cardTitle">Entrar na sua conta</h2>
-                    <p class="card-description" id="cardDescription">Entre para acessar suas oportunidades</p>
-                </div>
-
-                <form id="mainForm" class="form-container">
-                    <!-- Name field (hidden by default) -->
-                    <div class="form-field" id="nameField" style="display: none;">
-                        <label for="name" class="form-label">Nome completo</label>
-                        <input
-                            id="name"
-                            name="name"
-                            type="text"
-                            placeholder="Seu nome"
-                            class="form-input"
-                        />
-                        <span class="error-message" id="nameError"></span>
-                    </div>
-
-                    <!-- Email field -->
-                    <div class="form-field">
-                        <label for="email" class="form-label">Email</label>
-                        <div class="input-wrapper">
-                            <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="2" y="4" width="20" height="16" rx="2"></rect>
-                                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-                            </svg>
-                            <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                placeholder="seu.email@exemplo.com"
-                                class="form-input input-with-icon"
-                            />
-                        </div>
-                        <span class="error-message" id="emailError"></span>
-                    </div>
-
-                    <!-- Password field -->
-                    <div class="form-field">
-                        <label for="password" class="form-label">Senha</label>
-                        <div class="input-wrapper">
-                            <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                            </svg>
-                            <input
-                                id="password"
-                                name="password"
-                                type="password"
-                                placeholder="••••••••"
-                                class="form-input input-with-icon"
-                            />
-                        </div>
-                        <span class="error-message" id="passwordError"></span>
-                    </div>
-
-                    <!-- Confirm Password field (hidden by default) -->
-                    <div class="form-field" id="confirmPasswordField" style="display: none;">
-                        <label for="confirmPassword" class="form-label">Confirmar senha</label>
-                        <div class="input-wrapper">
-                            <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                            </svg>
-                            <input
-                                id="confirmPassword"
-                                name="confirmPassword"
-                                type="password"
-                                placeholder="••••••••"
-                                class="form-input input-with-icon"
-                            />
-                        </div>
-                        <span class="error-message" id="confirmPasswordError"></span>
-                    </div>
-
-                    <button type="submit" class="submit-button" id="submitButton">Entrar</button>
-                </form>
-
-                <div class="divider">
-                    <span>ou</span>
-                </div>
-
-                <div class="profile-section">
-                    <p class="profile-title">Acesso rápido</p>
-                    <div class="profile-buttons">
-                        <button type="button" class="profile-button" id="companyButton">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M3 21h18"></path>
-                                <path d="M9 8h1"></path>
-                                <path d="M9 12h1"></path>
-                                <path d="M9 16h1"></path>
-                                <path d="M14 8h1"></path>
-                                <path d="M14 12h1"></path>
-                                <path d="M14 16h1"></path>
-                                <path d="M6 3v18"></path>
-                                <path d="M18 3v18"></path>
-                                <path d="M6 3h12"></path>
-                            </svg>
-                            <span>Perfil Empresa</span>
-                        </button>
-                        <button type="button" class="profile-button profile-button-active" id="studentButton">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                                <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
-                            </svg>
-                            <span>Perfil Estudante</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer -->
-            <div class="footer">
-                <p>
-                    <span id="footerText">Ainda não tem uma conta?</span>
-                    <button type="button" id="toggleButton" class="toggle-button">Criar conta gratuita</button>
-                </p>
-            </div>
-        </div>
+        <footer>
+            <p>Nexus &copy; 2023 - Todos os direitos reservados</p>
+        </footer>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('fileInput');
+            const previewContainer = document.getElementById('previewContainer');
+            const reportForm = document.getElementById('reportForm');
+            const confirmation = document.getElementById('confirmation');
+            const backButton = document.getElementById('backButton');
+            
+            // Preview de imagens selecionadas
+            fileInput.addEventListener('change', function() {
+                previewContainer.innerHTML = '';
+                
+                if (this.files) {
+                    Array.from(this.files).forEach(file => {
+                        const reader = new FileReader();
+                        
+                        reader.onload = function(e) {
+                            const previewItem = document.createElement('div');
+                            previewItem.className = 'preview-item';
+                            
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.alt = 'Preview da imagem';
+                            
+                            const removeBtn = document.createElement('button');
+                            removeBtn.className = 'remove-btn';
+                            removeBtn.innerHTML = '×';
+                            removeBtn.type = 'button';
+                            
+                            removeBtn.addEventListener('click', function() {
+                                previewItem.remove();
+                                // Aqui seria necessário remover o arquivo do fileInput também
+                                // Mas isso é mais complexo e exigiria recriar o FileList
+                            });
+                            
+                            previewItem.appendChild(img);
+                            previewItem.appendChild(removeBtn);
+                            previewContainer.appendChild(previewItem);
+                        }
+                        
+                        reader.readAsDataURL(file);
+                    });
+                }
+            });
+            
+            // Envio do formulário
+            reportForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Aqui normalmente enviaríamos os dados para um servidor
+                // Por enquanto, apenas simulamos o envio
+                
+                // Esconde o formulário e mostra a confirmação
+                reportForm.style.display = 'none';
+                confirmation.style.display = 'block';
+            });
+            
+            // Botão para voltar ao formulário
+            backButton.addEventListener('click', function() {
+                confirmation.style.display = 'none';
+                reportForm.style.display = 'block';
+                reportForm.reset();
+                previewContainer.innerHTML = '';
+            });
+        });
+    </script>
 </body>
 </html>
-
