@@ -3,7 +3,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 :root {
@@ -59,6 +59,7 @@ body {
     color: var(--white);
     line-height: 1.6;
     overflow-x: hidden;
+    transition: all var(--transition-slow);
 }
 
 /* Container principal */
@@ -72,6 +73,7 @@ body {
     box-shadow: var(--shadow-xl);
     border: 1px solid var(--gray-dark);
     animation: fadeInUp 0.8s var(--transition-slow);
+    min-height: 700px;
 }
 
 @keyframes fadeInUp {
@@ -117,22 +119,6 @@ body {
     }
 }
 
-.brand-section::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    right: -20px;
-    transform: translateY(-50%);
-    width: 40px;
-    height: 40px;
-    background: var(--black-secondary);
-    border: 1px solid var(--gray-dark);
-    border-left: none;
-    border-bottom: none;
-    transform: translateY(-50%) rotate(45deg);
-    z-index: 2;
-}
-
 .brand-tag {
     background: var(--pink-primary);
     color: var(--white);
@@ -146,6 +132,7 @@ body {
     text-transform: uppercase;
     box-shadow: var(--shadow-sm);
     align-self: flex-start;
+    transition: var(--transition-normal);
 }
 
 .brand-section h1 {
@@ -199,8 +186,8 @@ body {
     transform: translateX(3px);
 }
 
-/* Seção de login */
-.login-section {
+/* Seção de conteúdo */
+.content-section {
     flex: 1;
     padding: 60px 50px;
     display: flex;
@@ -208,6 +195,14 @@ body {
     justify-content: center;
     background: var(--black-secondary);
     position: relative;
+}
+
+/* Tela de Login */
+.login-screen {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
 }
 
 .login-header {
@@ -446,6 +441,7 @@ body {
     font-weight: 500;
     transition: color var(--transition-normal);
     position: relative;
+    cursor: pointer;
 }
 
 .signup-link a::after {
@@ -476,6 +472,237 @@ body {
     line-height: 1.4;
 }
 
+/* ===== ESTILOS PARA TELA DE CRIAR CONTA ===== */
+
+.create-account-screen {
+    display: none;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.account-type-selector {
+    margin-bottom: 40px;
+}
+
+.account-type-selector h4 {
+    font-size: 1.2rem;
+    color: var(--white);
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.account-type-selector .subtitle {
+    color: var(--gray-light);
+    font-size: 0.95rem;
+    margin-bottom: 25px;
+}
+
+.account-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.account-option {
+    border: 1.5px solid var(--gray-dark);
+    border-radius: var(--border-radius-md);
+    padding: 20px;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    background: var(--black-tertiary);
+    position: relative;
+    overflow: hidden;
+}
+
+.account-option::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(236, 72, 153, 0.05), transparent);
+    transition: left var(--transition-slow);
+}
+
+.account-option:hover::before {
+    left: 100%;
+}
+
+.account-option:hover {
+    border-color: var(--pink-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.account-option.selected {
+    border-color: var(--pink-primary);
+    background: linear-gradient(135deg, var(--black-tertiary), #2a1a25);
+    box-shadow: var(--shadow-md);
+}
+
+.option-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.radio-wrapper {
+    position: relative;
+    margin-top: 2px;
+}
+
+.radio-wrapper input[type="radio"] {
+    opacity: 0;
+    position: absolute;
+}
+
+.radio-label {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--gray-medium);
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.radio-wrapper input[type="radio"]:checked + .radio-label {
+    border-color: var(--pink-primary);
+    background: var(--pink-primary);
+}
+
+.radio-wrapper input[type="radio"]:checked + .radio-label::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+}
+
+.option-text {
+    flex: 1;
+}
+
+.option-title {
+    font-size: 1rem;
+    color: var(--white);
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.option-description {
+    font-size: 0.9rem;
+    color: var(--gray-light);
+    line-height: 1.4;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.back-btn {
+    flex: 1;
+    padding: 16px;
+    border: 1.5px solid var(--gray-dark);
+    border-radius: var(--border-radius-sm);
+    background: var(--black-tertiary);
+    color: var(--gray-light);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.back-btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(236, 72, 153, 0.05), transparent);
+    transition: left var(--transition-slow);
+}
+
+.back-btn:hover::before {
+    left: 100%;
+}
+
+.back-btn:hover {
+    border-color: var(--pink-primary);
+    color: var(--pink-primary);
+    transform: translateY(-1px);
+}
+
+.continue-btn {
+    flex: 2;
+    padding: 16px;
+    border: none;
+    border-radius: var(--border-radius-sm);
+    background: var(--gray-dark);
+    color: var(--gray-medium);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: not-allowed;
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.continue-btn:not(:disabled) {
+    background: var(--gradient-primary);
+    color: white;
+    cursor: pointer;
+    box-shadow: var(--shadow-md);
+}
+
+.continue-btn:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.continue-btn:not(:disabled)::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left var(--transition-slow);
+}
+
+.continue-btn:not(:disabled):hover::before {
+    left: 100%;
+}
+
+/* Estados ativos das telas */
+.active-screen {
+    display: flex !important;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(20px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
 /* Estados de loading */
 .loading {
     pointer-events: none;
@@ -501,7 +728,7 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-/* Estados de erro e sucesso */
+/* Estados de erro */
 .form-group.error input {
     border-color: #ef4444;
     box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
@@ -531,17 +758,13 @@ body {
         max-width: 500px;
     }
     
-    .brand-section, .login-section {
+    .brand-section, .content-section {
         padding: 40px 30px;
     }
     
     .brand-section {
         border-right: none;
         border-bottom: 1px solid var(--gray-dark);
-    }
-    
-    .brand-section::after {
-        display: none;
     }
     
     .brand-section h1 {
@@ -554,7 +777,7 @@ body {
         padding: 15px;
     }
     
-    .brand-section, .login-section {
+    .brand-section, .content-section {
         padding: 30px 25px;
     }
     
@@ -564,6 +787,18 @@ body {
     
     .profile-selector {
         flex-direction: column;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .account-option {
+        padding: 15px;
+    }
+    
+    .option-content {
+        gap: 12px;
     }
     
     .brand-tag {
